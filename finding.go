@@ -1,8 +1,6 @@
 package dtrack
 
 import (
-	"context"
-
 	"github.com/google/uuid"
 )
 
@@ -20,9 +18,4 @@ type FindingAttribution struct {
 	AlternateIdentifier string    `json:"alternateIdentifier"`
 	AttributedOn        string    `json:"attributedOn"`
 	ReferenceURL        string    `json:"referenceUrl"`
-}
-
-type FindingService interface {
-	GetFindingsForProject(ctx context.Context, pUUID uuid.UUID) ([]Finding, error)
-	ExportFindingsForProject(ctx context.Context, pUUID uuid.UUID) (string, error)
 }

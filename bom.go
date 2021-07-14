@@ -14,8 +14,6 @@ type BOMUploadRequest struct {
 	BOM            string     `json:"bom"`
 }
 
-type BOMService interface {
-	ExportProjectAsCycloneDX(ctx context.Context, pUUID uuid.UUID) (string, error)
-	IsProcessingBOM(ctx context.Context, token string) (bool, error)
-	UploadBOM(ctx context.Context, req BOMUploadRequest) (string, error)
+func (c Client) UploadBOM(ctx context.Context, req BOMUploadRequest) (string, error) {
+	return "", nil
 }

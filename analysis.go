@@ -1,8 +1,6 @@
 package dtrack
 
 import (
-	"context"
-
 	"github.com/google/uuid"
 )
 
@@ -25,9 +23,4 @@ type AnalysisRequest struct {
 	Comment           string    `json:"comment,omitempty"`
 	State             string    `json:"analysisState,omitempty"`
 	Suppressed        *bool     `json:"isSuppressed,omitempty"`
-}
-
-type AnalysisService interface {
-	CreateAnalysis(ctx context.Context, req AnalysisRequest) (*Analysis, error)
-	GetAnalysis(ctx context.Context, cUUID, pUUID, vUUID uuid.UUID) (*Analysis, error)
 }

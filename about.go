@@ -1,8 +1,6 @@
 package dtrack
 
 import (
-	"context"
-
 	"github.com/google/uuid"
 )
 
@@ -20,8 +18,4 @@ type AboutFramework struct {
 	Name      string    `json:"name"`
 	Version   string    `json:"version"`
 	Timestamp string    `json:"timestamp"`
-}
-
-type AboutService interface {
-	GetAbout(ctx context.Context) (*About, error)
 }
