@@ -21,7 +21,7 @@ type ComponentsResponse struct {
 }
 
 func (c Client) GetComponents(ctx context.Context, puuid uuid.UUID, po PageOptions) (*ComponentsResponse, error) {
-	req, err := c.newPagingRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", puuid), nil, nil, po)
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", puuid), withPageOptions(po))
 	if err != nil {
 		return nil, err
 	}

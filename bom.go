@@ -22,7 +22,7 @@ type bomUploadResponse struct {
 type BOMUploadToken string
 
 func (c Client) UploadBOM(ctx context.Context, uploadReq BOMUploadRequest) (BOMUploadToken, error) {
-	req, err := c.newRequest(ctx, http.MethodPut, "/api/v1/bom", nil, uploadReq)
+	req, err := c.newRequest(ctx, http.MethodPut, "/api/v1/bom", withBody(uploadReq))
 	if err != nil {
 		return "", err
 	}

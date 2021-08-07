@@ -48,53 +48,80 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	return &client, nil
 }
 
-func (c Client) newRequest(ctx context.Context, method, path string, params map[string]string, body interface{}) (*http.Request, error) {
+func (c Client) newRequest(ctx context.Context, method, path string, options ...requestOption) (*http.Request, error) {
 	u, err := c.baseURL.Parse(path)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(params) > 0 {
-		values := url.Values{}
-
-		for pk, pv := range params {
-			values.Add(pk, pv)
-		}
-
-		u.RawQuery = values.Encode()
-	}
-
-	var contentType string
-	var bodyBuf io.ReadWriter
-	if body != nil {
-		switch body := body.(type) {
-		case url.Values:
-			bodyBuf = bytes.NewBufferString("")
-			if _, err = fmt.Fprint(bodyBuf, body.Encode()); err != nil {
-				return nil, err
-			}
-			contentType = "application/x-www-form-urlencoded"
-		default:
-			bodyBuf = new(bytes.Buffer)
-			if err = json.NewEncoder(bodyBuf).Encode(body); err != nil {
-				return nil, err
-			}
-			contentType = "application/json"
-		}
-	}
-
-	req, err := http.NewRequestWithContext(ctx, method, u.String(), bodyBuf)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Accept", "application/json")
-	if contentType != "" {
-		req.Header.Set("Content-Type", contentType)
-	}
 	req.Header.Set("User-Agent", DefaultUserAgent)
 
+	for _, option := range options {
+		if err = option(req); err != nil {
+			return nil, err
+		}
+	}
+
 	return req, nil
+}
+
+type requestOption func(*http.Request) error
+
+func withParams(params map[string]string) requestOption {
+	return func(req *http.Request) error {
+		if len(params) == 0 {
+			return nil
+		}
+
+		query := req.URL.Query()
+
+		for pk, pv := range params {
+			query.Add(pk, pv)
+		}
+
+		req.URL.RawQuery = query.Encode()
+
+		return nil
+	}
+}
+
+func withBody(body interface{}) requestOption {
+	return func(req *http.Request) error {
+		if body == nil {
+			return nil
+		}
+
+		var (
+			contentType string
+			bodyBuf     io.ReadWriter
+		)
+
+		switch body := body.(type) {
+		case url.Values:
+			bodyBuf = bytes.NewBufferString("")
+			if _, err := fmt.Fprint(bodyBuf, body.Encode()); err != nil {
+				return err
+			}
+			contentType = "application/x-www-form-urlencoded"
+		default:
+			bodyBuf = new(bytes.Buffer)
+			if err := json.NewEncoder(bodyBuf).Encode(body); err != nil {
+				return err
+			}
+			contentType = "application/json"
+		}
+
+		req.Body = io.NopCloser(bodyBuf)
+		req.Header.Set("Content-Type", contentType)
+
+		return nil
+	}
 }
 
 type PageOptions struct {
@@ -103,23 +130,24 @@ type PageOptions struct {
 	PageSize   int // Amount of elements to return per page
 }
 
-func (c Client) newPagingRequest(ctx context.Context, method, path string, params map[string]string, body interface{}, po PageOptions) (*http.Request, error) {
-	paramsCopy := make(map[string]string)
-	for k, v := range params {
-		paramsCopy[k] = v
-	}
+func withPageOptions(po PageOptions) requestOption {
+	return func(req *http.Request) error {
+		query := req.URL.Query()
 
-	if po.Offset > 0 {
-		paramsCopy["offset"] = strconv.Itoa(po.Offset)
-	} else if po.PageNumber > 0 {
-		paramsCopy["pageNumber"] = strconv.Itoa(po.PageNumber)
-	}
+		if po.Offset > 0 {
+			query.Set("offset", strconv.Itoa(po.Offset))
+		} else if po.PageNumber > 0 {
+			query.Set("pageNumber", strconv.Itoa(po.PageNumber))
+		}
 
-	if po.PageSize > 0 {
-		paramsCopy["pageSize"] = strconv.Itoa(po.PageSize)
-	}
+		if po.PageSize > 0 {
+			query.Set("pageSize", strconv.Itoa(po.PageSize))
+		}
 
-	return c.newRequest(ctx, method, path, paramsCopy, body)
+		req.URL.RawQuery = query.Encode()
+
+		return nil
+	}
 }
 
 func (c Client) doRequest(req *http.Request, v interface{}) (*APIResponse, error) {
