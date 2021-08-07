@@ -1,6 +1,9 @@
 package dtrack
 
 import (
+	"context"
+	"net/http"
+
 	"github.com/google/uuid"
 )
 
@@ -18,4 +21,18 @@ type AboutFramework struct {
 	Name      string    `json:"name"`
 	Version   string    `json:"version"`
 	Timestamp string    `json:"timestamp"`
+}
+
+func (c Client) GetAbout(ctx context.Context) (*About, error) {
+	req, err := c.newRequest(ctx, http.MethodGet, "/api/version", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var about About
+	if _, err = c.doRequest(req, &about); err != nil {
+		return nil, err
+	}
+
+	return &about, nil
 }
