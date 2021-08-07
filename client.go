@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -63,7 +62,6 @@ func (c Client) newRequest(ctx context.Context, method, path string, params map[
 		}
 
 		u.RawQuery = values.Encode()
-		log.Printf("url: %s", u.String())
 	}
 
 	var contentType string
