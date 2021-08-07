@@ -85,7 +85,7 @@ func (c Client) newRequest(ctx context.Context, method, path string, params map[
 		}
 	}
 
-	req, err := http.NewRequest(method, u.String(), bodyBuf)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), bodyBuf)
 	if err != nil {
 		return nil, err
 	}
