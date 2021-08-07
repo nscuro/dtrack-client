@@ -10,11 +10,11 @@ import (
 )
 
 type Finding struct {
-	Attribution   *FindingAttribution `json:"attribution"`
-	Analysis      *Analysis           `json:"analysis"`
-	Component     Component           `json:"component"`
-	Matrix        string              `json:"matrix"`
-	Vulnerability Vulnerability       `json:"vulnerability"`
+	Attribution   FindingAttribution `json:"attribution"`
+	Analysis      Analysis           `json:"analysis"`
+	Component     Component          `json:"component"`
+	Matrix        string             `json:"matrix"`
+	Vulnerability Vulnerability      `json:"vulnerability"`
 }
 
 type FindingAttribution struct {

@@ -65,12 +65,13 @@ func main() {
 
 	fmt.Println()
 	for _, finding := range findings {
-		fmt.Printf(" > %s [%s]\n", finding.Vulnerability.VulnID, finding.Vulnerability.Severity)
+		analysis := finding.Analysis
+		vulnerability := finding.Vulnerability
+
+		fmt.Printf(" > %s [%s]\n", vulnerability.VulnID, vulnerability.Severity)
 		fmt.Printf("   Component: %s\n", finding.Component.PackageURL)
-		if finding.Analysis != nil {
-			fmt.Printf("   Analysis: state=%s, suppressed=%t\n", finding.Analysis.State, finding.Analysis.Suppressed)
-		}
-		fmt.Printf("   Details: %s\n", fmt.Sprintf("%s/vulnerabilities/%s/%s", baseURL, finding.Vulnerability.Source, finding.Vulnerability.VulnID))
+		fmt.Printf("   Analysis: state=%s, suppressed=%t\n", analysis.State, analysis.Suppressed)
+		fmt.Printf("   Details: %s\n", fmt.Sprintf("%s/vulnerabilities/%s/%s", baseURL, vulnerability.Source, vulnerability.VulnID))
 		fmt.Println()
 	}
 }

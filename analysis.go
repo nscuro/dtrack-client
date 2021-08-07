@@ -70,6 +70,36 @@ type Analysis struct {
 	Suppressed bool              `json:"isSuppressed"`
 }
 
+// findingAnalysis represents the Analysis object as returned by the findings API.
+// Instead of `analysisState`, the state of an analysis is provided as `state` field.
+// See https://github.com/DependencyTrack/dependency-track/blob/4.3.2/src/main/java/org/dependencytrack/model/Finding.java#L116
+type findingAnalysis struct {
+	Comments   []AnalysisComment `json:"comments"`
+	State      AnalysisState     `json:"analysisState"`
+	StateAlias AnalysisState     `json:"state"`
+	Suppressed bool              `json:"isSuppressed"`
+}
+
+func (a *Analysis) UnmarshalJSON(bytes []byte) error {
+	var fa findingAnalysis
+
+	if err := json.Unmarshal(bytes, &fa); err != nil {
+		return err
+	}
+
+	*a = Analysis{
+		Comments:   fa.Comments,
+		State:      fa.State,
+		Suppressed: fa.Suppressed,
+	}
+
+	if fa.State == AnalysisStateNotSet && fa.StateAlias != AnalysisStateNotSet {
+		a.State = fa.StateAlias
+	}
+
+	return nil
+}
+
 type AnalysisComment struct {
 	Comment   string `json:"comment"`
 	Commenter string `json:"commenter"`
