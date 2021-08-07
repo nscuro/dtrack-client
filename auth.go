@@ -1,6 +1,7 @@
 package dtrack
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -24,12 +25,27 @@ func WithAPIKey(apiKey string) ClientOption {
 	}
 }
 
+const contextKeyNoAuth contextKey = "noauth"
+
+func withoutAuth() requestOption {
+	return func(r *http.Request) error {
+		ctx := context.WithValue(r.Context(), contextKeyNoAuth, true)
+		*r = *(r.WithContext(ctx))
+		return nil
+	}
+}
+
 type apiKeyTransport struct {
 	apiKey    string
 	transport http.RoundTripper
 }
 
 func (t apiKeyTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	unauthenticated, ok := req.Context().Value(contextKeyNoAuth).(bool)
+	if ok && unauthenticated {
+		return t.transport.RoundTrip(req)
+	}
+
 	reqCopy := *req // Shallow copy of req
 
 	// Deep copy of request headers, because we'll modify them

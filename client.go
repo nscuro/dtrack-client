@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"time"
@@ -17,9 +19,12 @@ const (
 	DefaultUserAgent = "github.com/nscuro/dtrack-client"
 )
 
+type contextKey string
+
 type Client struct {
 	httpClient *http.Client
 	baseURL    *url.URL
+	debug      bool
 }
 
 func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
@@ -151,18 +156,30 @@ func withPageOptions(po PageOptions) requestOption {
 }
 
 func (c Client) doRequest(req *http.Request, v interface{}) (*APIResponse, error) {
+	if c.debug {
+		reqDump, _ := httputil.DumpRequestOut(req, true)
+		log.Printf("sending request:\n%s", string(reqDump))
+	}
+
 	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer res.Body.Close()
 
+	if c.debug {
+		resDump, _ := httputil.DumpResponse(res, true)
+		log.Printf("received response:\n%s", string(resDump))
+	}
+
 	if err = checkResponse(res); err != nil {
 		return nil, err
 	}
 
-	if err = json.NewDecoder(res.Body).Decode(v); err != nil {
-		return nil, err
+	if v != nil {
+		if err = json.NewDecoder(res.Body).Decode(v); err != nil {
+			return nil, err
+		}
 	}
 
 	apiResponse, err := c.newAPIResponse(res)

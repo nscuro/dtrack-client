@@ -24,7 +24,7 @@ type AboutFramework struct {
 }
 
 func (c Client) GetAbout(ctx context.Context) (*About, error) {
-	req, err := c.newRequest(ctx, http.MethodGet, "/api/version")
+	req, err := c.newRequest(ctx, http.MethodGet, "/api/version", withoutAuth())
 	if err != nil {
 		return nil, err
 	}
