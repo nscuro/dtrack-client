@@ -13,9 +13,9 @@ type Project struct {
 	Version string `json:"version"`
 }
 
-type ProjectsResponse struct {
-	TotalCount int
+type ProjectsPage struct {
 	Projects   []Project
+	TotalCount int
 }
 
 func (c Client) GetProject(ctx context.Context, u uuid.UUID) (*Project, error) {
@@ -53,7 +53,7 @@ func (c Client) LookupProject(ctx context.Context, name, version string) (*Proje
 	return &project, nil
 }
 
-func (c Client) GetProjects(ctx context.Context, po PageOptions) (*ProjectsResponse, error) {
+func (c Client) GetProjects(ctx context.Context, po PageOptions) (*ProjectsPage, error) {
 	req, err := c.newRequest(ctx, http.MethodGet, "/api/v1/project", withPageOptions(po))
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (c Client) GetProjects(ctx context.Context, po PageOptions) (*ProjectsRespo
 		return nil, err
 	}
 
-	return &ProjectsResponse{
+	return &ProjectsPage{
 		TotalCount: res.TotalCount,
 		Projects:   projects,
 	}, nil
