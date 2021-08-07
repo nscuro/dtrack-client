@@ -2,6 +2,7 @@ package dtrack
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -11,7 +12,10 @@ type APIError struct {
 }
 
 func (e APIError) Error() string {
-	return fmt.Sprintf("%d: %s", e.StatusCode, e.Message)
+	if e.Message == "" {
+		return fmt.Sprintf("api error (status: %d)", e.StatusCode)
+	}
+	return fmt.Sprintf("%s (status: %d)", e.Message, e.StatusCode)
 }
 
 func checkResponse(res *http.Response) error {
@@ -19,9 +23,12 @@ func checkResponse(res *http.Response) error {
 		return nil
 	}
 
-	// TODO: Read body and set .Message
+	apiErr := &APIError{StatusCode: res.StatusCode}
 
-	return &APIError{
-		StatusCode: res.StatusCode,
+	body, err := io.ReadAll(res.Body)
+	if err == nil && body != nil {
+		apiErr.Message = string(body)
 	}
+
+	return apiErr
 }
