@@ -75,3 +75,27 @@ func (p ProjectService) GetAll(ctx context.Context, po PageOptions) (*ProjectsPa
 		Projects:   projects,
 	}, nil
 }
+
+type ProjectCloneRequest struct {
+	UUID                uuid.UUID `json:"project"`
+	Version             string    `json:"version"`
+	IncludeAuditHistory bool      `json:"includeAuditHistory"`
+	IncludeComponents   bool      `json:"includeComponents"`
+	IncludeProperties   bool      `json:"includeProperties"`
+	IncludeServices     bool      `json:"includeServices"`
+	IncludeTags         bool      `json:"includeTags"`
+}
+
+func (p ProjectService) Clone(ctx context.Context, cloneReq ProjectCloneRequest) error {
+	req, err := p.client.newRequest(ctx, http.MethodPut, "/api/v1/project/clone", withBody(cloneReq))
+	if err != nil {
+		return err
+	}
+
+	_, err = p.client.doRequest(req, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
