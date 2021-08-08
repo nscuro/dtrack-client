@@ -24,6 +24,7 @@ type contextKey string
 type Client struct {
 	httpClient *http.Client
 	baseURL    *url.URL
+	userAgent  string
 	debug      bool
 }
 
@@ -40,8 +41,10 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	client := Client{
 		baseURL: u,
 		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: DefaultTimeout,
 		},
+		userAgent: DefaultUserAgent,
+		debug:     false,
 	}
 
 	for _, option := range options {
@@ -212,6 +215,20 @@ func (c Client) newAPIResponse(res *http.Response) (*APIResponse, error) {
 }
 
 type ClientOption func(*Client) error
+
+func WithDebug(debug bool) ClientOption {
+	return func(c *Client) error {
+		c.debug = debug
+		return nil
+	}
+}
+
+func WithUserAgent(userAgent string) ClientOption {
+	return func(c *Client) error {
+		c.userAgent = userAgent
+		return nil
+	}
+}
 
 func WithTimeout(timeout time.Duration) ClientOption {
 	return func(c *Client) error {
