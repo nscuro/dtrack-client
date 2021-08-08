@@ -9,8 +9,9 @@ import (
 )
 
 type Project struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+	UUID    uuid.UUID `json:"uuid"`
+	Name    string    `json:"name"`
+	Version string    `json:"version"`
 }
 
 type ProjectsPage struct {

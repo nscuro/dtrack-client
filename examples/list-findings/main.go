@@ -27,36 +27,14 @@ func main() {
 		log.Fatalf("failed to initialize client: %v", err)
 	}
 
-	pu, err := uuid.Parse(projectUUID)
+	project, err := client.Project.Get(context.Background(), uuid.MustParse(projectUUID))
 	if err != nil {
-		log.Fatalf("failed to parse project uuid: %v", err)
+		log.Fatalf("failed to fetch project: %v", err)
 	}
 
-	ctx := context.Background()
-	findings := make([]dtrack.Finding, 0)
-
-	var (
-		pageNumber = 1
-		pageSize   = 10
-	)
-
-	for {
-		fr, err := client.Finding.GetAll(ctx, pu, false, dtrack.PageOptions{
-			PageNumber: pageNumber,
-			PageSize:   pageSize,
-		})
-		if err != nil {
-			log.Fatalf("failed to fetch findings: %v", err)
-		}
-
-		findings = append(findings, fr.Findings...)
-		log.Printf("fetched %d/%d findings", len(findings), fr.TotalCount)
-
-		if len(findings) >= fr.TotalCount {
-			break
-		}
-
-		pageNumber++
+	findings, err := getFindingsForProject(client, project)
+	if err != nil {
+		log.Fatalf("failed to fetch findings: %v", err)
 	}
 
 	if len(findings) == 0 {
@@ -74,4 +52,35 @@ func main() {
 		fmt.Printf("   Details: %s\n", fmt.Sprintf("%s/vulnerabilities/%s/%s", baseURL, vulnerability.Source, vulnerability.VulnID))
 		fmt.Println()
 	}
+}
+
+func getFindingsForProject(client *dtrack.Client, project *dtrack.Project) ([]dtrack.Finding, error) {
+	log.Printf("fetching findings for project %s %s", project.Name, project.Version)
+
+	var (
+		findings   []dtrack.Finding
+		pageNumber = 1
+		pageSize   = 10
+	)
+
+	for {
+		fr, err := client.Finding.GetAll(context.Background(), project.UUID, false, dtrack.PageOptions{
+			PageNumber: pageNumber,
+			PageSize:   pageSize,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		findings = append(findings, fr.Findings...)
+		log.Printf("fetched %d/%d findings", len(findings), fr.TotalCount)
+
+		if len(findings) >= fr.TotalCount {
+			break
+		}
+
+		pageNumber++
+	}
+
+	return findings, nil
 }
