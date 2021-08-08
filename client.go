@@ -234,6 +234,8 @@ func (c Client) newAPIResponse(res *http.Response) (*apiResponse, error) {
 
 type ClientOption func(*Client) error
 
+// WithDebug toggles the debug mode.
+// When enabled, HTTP requests and responses will be logged to stderr.
 func WithDebug(debug bool) ClientOption {
 	return func(c *Client) error {
 		c.debug = debug
@@ -241,6 +243,7 @@ func WithDebug(debug bool) ClientOption {
 	}
 }
 
+// WithUserAgent overrides the default user agent.
 func WithUserAgent(userAgent string) ClientOption {
 	return func(c *Client) error {
 		c.userAgent = userAgent
@@ -248,6 +251,7 @@ func WithUserAgent(userAgent string) ClientOption {
 	}
 }
 
+// WithTimeout overrides the default timeout.
 func WithTimeout(timeout time.Duration) ClientOption {
 	return func(c *Client) error {
 		c.httpClient.Timeout = timeout
