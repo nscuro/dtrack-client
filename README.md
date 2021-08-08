@@ -21,3 +21,8 @@ GO111MODULE=on go get github.com/nscuro/dtrack-client
 ## Usage
 
 See [`examples`](./examples).
+
+## API Coverage
+
+*dtrack-client* primarily covers those parts of the Dependency-Track API that I personally need.
+If you'd like to use this library, and your desired functionality is not yet available, please consider creating a PR.
