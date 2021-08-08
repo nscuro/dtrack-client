@@ -68,7 +68,7 @@ func (c Client) newRequest(ctx context.Context, method, path string, options ...
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", DefaultUserAgent)
+	req.Header.Set("User-Agent", c.userAgent)
 
 	for _, option := range options {
 		if err = option(req); err != nil {
