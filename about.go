@@ -23,14 +23,18 @@ type AboutFramework struct {
 	Timestamp string    `json:"timestamp"`
 }
 
-func (c Client) GetAbout(ctx context.Context) (*About, error) {
-	req, err := c.newRequest(ctx, http.MethodGet, "/api/version", withoutAuth())
+type AboutService struct {
+	client *Client
+}
+
+func (a AboutService) Get(ctx context.Context) (*About, error) {
+	req, err := a.client.newRequest(ctx, http.MethodGet, "/api/version", withoutAuth())
 	if err != nil {
 		return nil, err
 	}
 
 	var about About
-	if _, err = c.doRequest(req, &about); err != nil {
+	if _, err = a.client.doRequest(req, &about); err != nil {
 		return nil, err
 	}
 

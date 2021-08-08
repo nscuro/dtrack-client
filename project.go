@@ -18,14 +18,18 @@ type ProjectsPage struct {
 	TotalCount int
 }
 
-func (c Client) GetProject(ctx context.Context, u uuid.UUID) (*Project, error) {
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", u))
+type ProjectService struct {
+	client *Client
+}
+
+func (p ProjectService) Get(ctx context.Context, u uuid.UUID) (*Project, error) {
+	req, err := p.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", u))
 	if err != nil {
 		return nil, err
 	}
 
 	var project Project
-	_, err = c.doRequest(req, &project)
+	_, err = p.client.doRequest(req, &project)
 	if err != nil {
 		return nil, err
 	}
@@ -33,19 +37,19 @@ func (c Client) GetProject(ctx context.Context, u uuid.UUID) (*Project, error) {
 	return &project, nil
 }
 
-func (c Client) LookupProject(ctx context.Context, name, version string) (*Project, error) {
+func (p ProjectService) Lookup(ctx context.Context, name, version string) (*Project, error) {
 	params := map[string]string{
 		"name":    name,
 		"version": version,
 	}
 
-	req, err := c.newRequest(ctx, http.MethodGet, "/api/v1/project/lookup", withParams(params))
+	req, err := p.client.newRequest(ctx, http.MethodGet, "/api/v1/project/lookup", withParams(params))
 	if err != nil {
 		return nil, err
 	}
 
 	var project Project
-	_, err = c.doRequest(req, &project)
+	_, err = p.client.doRequest(req, &project)
 	if err != nil {
 		return nil, err
 	}
@@ -53,14 +57,14 @@ func (c Client) LookupProject(ctx context.Context, name, version string) (*Proje
 	return &project, nil
 }
 
-func (c Client) GetProjects(ctx context.Context, po PageOptions) (*ProjectsPage, error) {
-	req, err := c.newRequest(ctx, http.MethodGet, "/api/v1/project", withPageOptions(po))
+func (p ProjectService) GetAll(ctx context.Context, po PageOptions) (*ProjectsPage, error) {
+	req, err := p.client.newRequest(ctx, http.MethodGet, "/api/v1/project", withPageOptions(po))
 	if err != nil {
 		return nil, err
 	}
 
 	var projects []Project
-	res, err := c.doRequest(req, &projects)
+	res, err := p.client.doRequest(req, &projects)
 	if err != nil {
 		return nil, err
 	}

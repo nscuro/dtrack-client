@@ -30,18 +30,22 @@ type FindingsPage struct {
 	TotalCount int
 }
 
-func (c Client) GetFindings(ctx context.Context, project uuid.UUID, suppressed bool, po PageOptions) (*FindingsPage, error) {
+type FindingService struct {
+	client *Client
+}
+
+func (f FindingService) GetAll(ctx context.Context, project uuid.UUID, suppressed bool, po PageOptions) (*FindingsPage, error) {
 	params := map[string]string{
 		"suppressed": strconv.FormatBool(suppressed),
 	}
 
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/finding/project/%s", project), withParams(params), withPageOptions(po))
+	req, err := f.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/finding/project/%s", project), withParams(params), withPageOptions(po))
 	if err != nil {
 		return nil, err
 	}
 
 	var findings []Finding
-	res, err := c.doRequest(req, &findings)
+	res, err := f.client.doRequest(req, &findings)
 	if err != nil {
 		return nil, err
 	}

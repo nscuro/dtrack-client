@@ -21,14 +21,18 @@ type ComponentsPage struct {
 	TotalCount int
 }
 
-func (c Client) GetComponents(ctx context.Context, project uuid.UUID, po PageOptions) (*ComponentsPage, error) {
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", project), withPageOptions(po))
+type ComponentService struct {
+	client *Client
+}
+
+func (c ComponentService) GetAll(ctx context.Context, project uuid.UUID, po PageOptions) (*ComponentsPage, error) {
+	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", project), withPageOptions(po))
 	if err != nil {
 		return nil, err
 	}
 
 	var components []Component
-	res, err := c.doRequest(req, &components)
+	res, err := c.client.doRequest(req, &components)
 	if err != nil {
 		return nil, err
 	}

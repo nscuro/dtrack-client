@@ -41,7 +41,7 @@ func main() {
 		log.Fatalf("failed to read bom file: %v", err)
 	}
 
-	token, err := client.UploadBOM(context.Background(), dtrack.BOMUploadRequest{
+	token, err := client.BOM.Upload(context.Background(), dtrack.BOMUploadRequest{
 		ProjectName:    projectName,
 		ProjectVersion: projectVersion,
 		AutoCreate:     autoCreate,
@@ -65,7 +65,7 @@ func main() {
 		for {
 			select {
 			case <-ticker.C:
-				processing, err := client.IsProcessingBOM(context.Background(), token)
+				processing, err := client.BOM.IsBeingProcessed(context.Background(), token)
 				if err != nil {
 					log.Fatalf("failed to check bom processing status: %v", err)
 				}

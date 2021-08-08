@@ -115,20 +115,24 @@ type AnalysisRequest struct {
 	Suppressed    bool          `json:"isSuppressed"`
 }
 
-func (c Client) GetAnalysis(ctx context.Context, component, project, vulnerability uuid.UUID) (*Analysis, error) {
+type AnalysisService struct {
+	client *Client
+}
+
+func (a AnalysisService) Get(ctx context.Context, component, project, vulnerability uuid.UUID) (*Analysis, error) {
 	params := map[string]string{
 		"component":     component.String(),
 		"project":       project.String(),
 		"vulnerability": vulnerability.String(),
 	}
 
-	req, err := c.newRequest(ctx, http.MethodGet, "/api/v1/analysis", withParams(params))
+	req, err := a.client.newRequest(ctx, http.MethodGet, "/api/v1/analysis", withParams(params))
 	if err != nil {
 		return nil, err
 	}
 
 	var analysis Analysis
-	_, err = c.doRequest(req, &analysis)
+	_, err = a.client.doRequest(req, &analysis)
 	if err != nil {
 		return nil, err
 	}
@@ -136,14 +140,14 @@ func (c Client) GetAnalysis(ctx context.Context, component, project, vulnerabili
 	return &analysis, nil
 }
 
-func (c Client) CreateAnalysis(ctx context.Context, analysisReq AnalysisRequest) (*Analysis, error) {
-	req, err := c.newRequest(ctx, http.MethodPut, "/api/v1/analysis", withBody(analysisReq))
+func (a AnalysisService) Create(ctx context.Context, analysisReq AnalysisRequest) (*Analysis, error) {
+	req, err := a.client.newRequest(ctx, http.MethodPut, "/api/v1/analysis", withBody(analysisReq))
 	if err != nil {
 		return nil, err
 	}
 
 	var analysis Analysis
-	_, err = c.doRequest(req, &analysis)
+	_, err = a.client.doRequest(req, &analysis)
 	if err != nil {
 		return nil, err
 	}

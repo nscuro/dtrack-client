@@ -41,7 +41,7 @@ func main() {
 	)
 
 	for {
-		fr, err := client.GetFindings(ctx, pu, false, dtrack.PageOptions{
+		fr, err := client.Finding.GetAll(ctx, pu, false, dtrack.PageOptions{
 			PageNumber: pageNumber,
 			PageSize:   pageSize,
 		})

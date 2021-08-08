@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetAbout(t *testing.T) {
+func TestAboutService_Get(t *testing.T) {
 	client, err := NewClient("http://localhost")
 	require.NoError(t, err)
 
@@ -31,7 +31,7 @@ func TestGetAbout(t *testing.T) {
 	}
 }`))
 
-	about, err := client.GetAbout(context.TODO())
+	about, err := client.About.Get(context.TODO())
 	require.NoError(t, err)
 	require.NotNil(t, about)
 

@@ -26,6 +26,15 @@ type Client struct {
 	baseURL    *url.URL
 	userAgent  string
 	debug      bool
+
+	About      AboutService
+	Analysis   AnalysisService
+	BOM        BOMService
+	Component  ComponentService
+	Finding    FindingService
+	Project    ProjectService
+	Repository RepositoryService
+	User       UserService
 }
 
 func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
@@ -52,6 +61,15 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 			return nil, err
 		}
 	}
+
+	client.About = AboutService{client: &client}
+	client.Analysis = AnalysisService{client: &client}
+	client.BOM = BOMService{client: &client}
+	client.Component = ComponentService{client: &client}
+	client.Finding = FindingService{client: &client}
+	client.Project = ProjectService{client: &client}
+	client.Repository = RepositoryService{client: &client}
+	client.User = UserService{client: &client}
 
 	return &client, nil
 }
@@ -158,10 +176,10 @@ func withPageOptions(po PageOptions) requestOption {
 	}
 }
 
-func (c Client) doRequest(req *http.Request, v interface{}) (*APIResponse, error) {
+func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error) {
 	if c.debug {
 		reqDump, _ := httputil.DumpRequestOut(req, true)
-		log.Printf("sending request:\n%s", string(reqDump))
+		log.Printf("sending request:\n>>>>>>\n%s\n>>>>>>\n", string(reqDump))
 	}
 
 	res, err := c.httpClient.Do(req)
@@ -172,7 +190,7 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*APIResponse, error
 
 	if c.debug {
 		resDump, _ := httputil.DumpResponse(res, true)
-		log.Printf("received response:\n%s", string(resDump))
+		log.Printf("received response:\n<<<<<<\n%s\n<<<<<<\n", string(resDump))
 	}
 
 	if err = checkResponse(res); err != nil {
@@ -193,14 +211,14 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*APIResponse, error
 	return apiResponse, nil
 }
 
-type APIResponse struct {
+type apiResponse struct {
 	*http.Response
 
 	TotalCount int
 }
 
-func (c Client) newAPIResponse(res *http.Response) (*APIResponse, error) {
-	response := APIResponse{Response: res}
+func (c Client) newAPIResponse(res *http.Response) (*apiResponse, error) {
+	response := apiResponse{Response: res}
 
 	totalCount, ok := response.Header["X-Total-Count"]
 	if ok && len(totalCount) > 0 {
