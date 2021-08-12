@@ -47,7 +47,7 @@ func main() {
 		vulnerability := finding.Vulnerability
 
 		fmt.Printf(" > %s [%s]\n", vulnerability.VulnID, vulnerability.Severity)
-		fmt.Printf("   Component: %s\n", finding.Component.PackageURL)
+		fmt.Printf("   Component: %s\n", finding.Component.PURL)
 		fmt.Printf("   Analysis: state=%s, suppressed=%t\n", analysis.State, analysis.Suppressed)
 		fmt.Printf("   Details: %s\n", fmt.Sprintf("%s/vulnerabilities/%s/%s", baseURL, vulnerability.Source, vulnerability.VulnID))
 		fmt.Println()

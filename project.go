@@ -9,9 +9,23 @@ import (
 )
 
 type Project struct {
-	UUID    uuid.UUID `json:"uuid"`
-	Name    string    `json:"name"`
-	Version string    `json:"version"`
+	UUID        uuid.UUID `json:"uuid"`
+	Author      string    `json:"author"`
+	Publisher   string    `json:"publisher"`
+	Group       string    `json:"group"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Version     string    `json:"version"`
+	Classifier  string    `json:"classifier"`
+
+	CPE       string `json:"cpe"`
+	PURL      string `json:"purl"`
+	SWIDTagID string `json:"swidTagId"`
+
+	DirectDependencies string            `json:"directDependencies"`
+	Properties         []ProjectProperty `json:"properties"`
+	Tags               []Tag             `json:"tags"`
+	Active             bool              `json:"active"`
 }
 
 type ProjectsPage struct {

@@ -32,6 +32,7 @@ type Client struct {
 	BOM        BOMService
 	Component  ComponentService
 	Finding    FindingService
+	License    LicenseService
 	Project    ProjectService
 	Repository RepositoryService
 	User       UserService
@@ -67,6 +68,7 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	client.BOM = BOMService{client: &client}
 	client.Component = ComponentService{client: &client}
 	client.Finding = FindingService{client: &client}
+	client.License = LicenseService{client: &client}
 	client.Project = ProjectService{client: &client}
 	client.Repository = RepositoryService{client: &client}
 	client.User = UserService{client: &client}
