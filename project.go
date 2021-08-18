@@ -37,8 +37,8 @@ type ProjectService struct {
 	client *Client
 }
 
-func (p ProjectService) Get(ctx context.Context, u uuid.UUID) (*Project, error) {
-	req, err := p.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", u))
+func (p ProjectService) Get(ctx context.Context, projectUUID uuid.UUID) (*Project, error) {
+	req, err := p.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", projectUUID))
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (p ProjectService) GetAll(ctx context.Context, po PageOptions) (*ProjectsPa
 }
 
 type ProjectCloneRequest struct {
-	UUID                uuid.UUID `json:"project"`
+	ProjectUUID         uuid.UUID `json:"project"`
 	Version             string    `json:"version"`
 	IncludeAuditHistory bool      `json:"includeAuditHistory"`
 	IncludeComponents   bool      `json:"includeComponents"`

@@ -54,8 +54,23 @@ type ComponentService struct {
 	client *Client
 }
 
-func (c ComponentService) GetAll(ctx context.Context, project uuid.UUID, po PageOptions) (*ComponentsPage, error) {
-	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", project), withPageOptions(po))
+func (c ComponentService) Get(ctx context.Context, componentUUID uuid.UUID) (*Component, error) {
+	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/%s", componentUUID))
+	if err != nil {
+		return nil, err
+	}
+
+	var component Component
+	_, err = c.client.doRequest(req, &component)
+	if err != nil {
+		return nil, err
+	}
+
+	return &component, nil
+}
+
+func (c ComponentService) GetAll(ctx context.Context, projectUUID uuid.UUID, po PageOptions) (*ComponentsPage, error) {
+	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", projectUUID), withPageOptions(po))
 	if err != nil {
 		return nil, err
 	}

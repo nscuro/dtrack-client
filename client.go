@@ -27,15 +27,16 @@ type Client struct {
 	userAgent  string
 	debug      bool
 
-	About      AboutService
-	Analysis   AnalysisService
-	BOM        BOMService
-	Component  ComponentService
-	Finding    FindingService
-	License    LicenseService
-	Project    ProjectService
-	Repository RepositoryService
-	User       UserService
+	About         AboutService
+	Analysis      AnalysisService
+	BOM           BOMService
+	Component     ComponentService
+	Finding       FindingService
+	License       LicenseService
+	Project       ProjectService
+	Repository    RepositoryService
+	User          UserService
+	Vulnerability VulnerabilityService
 }
 
 func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
@@ -72,6 +73,7 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	client.Project = ProjectService{client: &client}
 	client.Repository = RepositoryService{client: &client}
 	client.User = UserService{client: &client}
+	client.Vulnerability = VulnerabilityService{client: &client}
 
 	return &client, nil
 }
