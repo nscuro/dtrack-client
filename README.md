@@ -20,7 +20,7 @@ GO111MODULE=on go get github.com/nscuro/dtrack-client
 
 ## Usage
 
-See [`examples`](./examples).
+Please refer to the [documentation](https://pkg.go.dev/github.com/nscuro/dtrack-client).
 
 ## API Coverage
 
