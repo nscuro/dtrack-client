@@ -18,7 +18,7 @@ jobs:
         with:
           go-version: 1.16
       - name: Generate SBOM
-        uses: CycloneDX/gh-gomod-generate-sbom@v0.3.0
+        uses: CycloneDX/gh-gomod-generate-sbom@v1.0.0
         with:
           json: true
           output: bom.json
