@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.0
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v2.5.2
         with:
           version: latest
 
@@ -31,16 +31,10 @@ jobs:
           - "^1.17"
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v2.1.4
         with:
           go-version: ${{ matrix.go }}
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.0
       - name: Test
         run: make test
-      - name: Generate SBOM
-        uses: CycloneDX/gh-gomod-generate-sbom@v0.3.0
-        with:
-          json: true
-          type: library
-          version: "^v0"
