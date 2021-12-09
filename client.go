@@ -81,9 +81,9 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 }
 
 // BaseURL provides a copy of the Dependency-Track base URL.
-func (c Client) BaseURL() url.URL {
+func (c Client) BaseURL() *url.URL {
 	u := *c.baseURL
-	return u
+	return &u
 }
 
 func (c Client) newRequest(ctx context.Context, method, path string, options ...requestOption) (*http.Request, error) {
