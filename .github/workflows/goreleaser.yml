@@ -23,7 +23,7 @@ jobs:
           args: mod -licenses -type library -json -output bom.json
           version: v1
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@5df302e5e9e4c66310a6b6493a8865b12c555af2 # renovate: tag=v2.8.0
+        uses: goreleaser/goreleaser-action@79d4afbba1b4eff8b9a98e3d2e58c4dbaf094e2b # renovate: tag=v2.8.1
         with:
           version: latest
           args: release --rm-dist
