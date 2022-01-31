@@ -11,6 +11,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -210,8 +211,17 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error
 	}
 
 	if v != nil {
-		if err = json.NewDecoder(res.Body).Decode(v); err != nil {
-			return nil, err
+		switch vt := v.(type) {
+		case *string:
+			if content, err := io.ReadAll(res.Body); err != nil {
+				return nil, err
+			} else {
+				*vt = strings.TrimSpace(string(content))
+			}
+		default:
+			if err = json.NewDecoder(res.Body).Decode(v); err != nil {
+				return nil, err
+			}
 		}
 	}
 
