@@ -112,8 +112,11 @@ func (s IntegrationTestSuite) setupContainer() (testcontainers.Container, string
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "dependencytrack/apiserver:4.3.6",
 			ExposedPorts: []string{"8080/tcp"},
-			WaitingFor:   wait.ForLog("Dependency-Track is ready"),
-			AutoRemove:   true,
+			WaitingFor: wait.ForAll(
+				wait.ForLog("Dependency-Track is ready"),
+				wait.ForHTTP("/api/version").WithPort("8080/tcp"),
+			),
+			AutoRemove: true,
 		},
 		Started: true,
 	}
