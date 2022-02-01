@@ -95,7 +95,7 @@ func (s IntegrationTestSuite) TestProjectPropertyCreateUpdateDelete() {
 }
 
 func (s IntegrationTestSuite) setupContainer() (testcontainers.Container, string, error) {
-	ctx, _ := context.WithTimeout(context.TODO(), 2*time.Minute)
+	ctx, _ := context.WithTimeout(context.TODO(), 2*time.Minute) //nolint:govet
 
 	req := testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
