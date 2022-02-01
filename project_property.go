@@ -3,16 +3,17 @@ package dtrack
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 type ProjectProperty struct {
 	Group       string `json:"groupName"`
 	Name        string `json:"propertyName"`
 	Value       string `json:"propertyValue"`
-	Type        string `json:"propertyType"`
-	Description string `json:"description"`
+	Type        string `json:"propertyType,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type ProjectPropertiesPage struct {
