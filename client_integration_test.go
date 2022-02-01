@@ -3,6 +3,7 @@ package dtrack_test
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 	"time"
 
@@ -50,6 +51,16 @@ func (s IntegrationTestSuite) TestAboutGet() {
 
 	s.Require().Equal("Dependency-Track", about.Application)
 	s.Require().Equal("Alpine", about.Framework.Name)
+}
+
+func (s IntegrationTestSuite) TestAPIError() {
+	_, err := s.client.Project.Create(context.TODO(), dtrack.Project{})
+	s.Require().Error(err)
+
+	var apiErr *dtrack.APIError
+	s.Require().ErrorAs(err, &apiErr)
+	s.Require().Equal(http.StatusBadRequest, apiErr.StatusCode)
+	s.Require().NotEmpty(apiErr.Message)
 }
 
 func (s IntegrationTestSuite) TestProjectCreateDelete() {
