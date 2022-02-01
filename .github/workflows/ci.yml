@@ -37,4 +37,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
       - name: Test
-        run: make test
+        run: make unit-test
+
+  integrationtest:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # renovate: tag=v2.1.5
+        with:
+          go-version: "^1.17" # Run against latest supported version
+      - name: Checkout Repository
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
+      - name: Integration Test
+        run: make integration-test

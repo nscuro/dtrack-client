@@ -10,6 +10,10 @@ unit-test:
 	go test -v -cover -short
 .PHONY: unit-test
 
+integration-test:
+	go test -v -cover -run IntegrationTest
+.PHONY: integration-test
+
 clean:
 	go clean
 .PHONY: clean
