@@ -34,6 +34,7 @@ type Client struct {
 	Component       ComponentService
 	Finding         FindingService
 	License         LicenseService
+	Metrics         MetricsService
 	Project         ProjectService
 	ProjectProperty ProjectPropertyService
 	Repository      RepositoryService
@@ -72,6 +73,7 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	client.Component = ComponentService{client: &client}
 	client.Finding = FindingService{client: &client}
 	client.License = LicenseService{client: &client}
+	client.Metrics = MetricsService{client: &client}
 	client.Project = ProjectService{client: &client}
 	client.ProjectProperty = ProjectPropertyService{client: &client}
 	client.Repository = RepositoryService{client: &client}
