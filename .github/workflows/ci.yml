@@ -31,7 +31,7 @@ jobs:
           - "^1.17"
     steps:
       - name: Setup Go
-        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # renovate: tag=v2.1.5
+        uses: actions/setup-go@bfdd3570ce990073878bf10f6b2d79082de49492 # renovate: tag=v2.2.0
         with:
           go-version: ${{ matrix.go }}
       - name: Checkout Repository
