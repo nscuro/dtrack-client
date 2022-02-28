@@ -21,7 +21,7 @@ jobs:
           go-version: "1.17"
           check-latest: true
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@5c56cd6c9dc07901af25baab6f2b0d9f3b7c3018 # renovate: tag=v2.5.2
+        uses: golangci/golangci-lint-action@b517f99ae23d86ecc4c0dec08dcf48d2336abc29 # tag=v3.1.0
         with:
           version: latest
 
