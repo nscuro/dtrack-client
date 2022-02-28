@@ -31,9 +31,9 @@ jobs:
     strategy:
       matrix:
         go:
-          - "1.15"
           - "1.16"
           - "1.17"
+          - "1.18.0-rc.1"
     steps:
       - name: Setup Go
         uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # tag=v3.0.0
