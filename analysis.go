@@ -3,66 +3,47 @@ package dtrack
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
 )
 
-type AnalysisState int
+type AnalysisJustification string
 
 const (
-	AnalysisStateNotSet AnalysisState = iota
-	AnalysisStateInTriage
-	AnalysisStateExploitable
-	AnalysisStateNotAffected
-	AnalysisStateFalsePositive
+	AnalysisJustificationCodeNotPresent               AnalysisJustification = "CODE_NOT_PRESENT"
+	AnalysisJustificationCodeNotReachable             AnalysisJustification = "CODE_NOT_REACHABLE"
+	AnalysisJustificationNotSet                       AnalysisJustification = "NOT_SET"
+	AnalysisJustificationProtectedAtPerimeter         AnalysisJustification = "PROTECTED_AT_PERIMETER"
+	AnalysisJustificationProtectedAtRuntime           AnalysisJustification = "PROTECTED_AT_RUNTIME"
+	AnalysisJustificationProtectedByCompiler          AnalysisJustification = "PROTECTED_BY_COMPILER"
+	AnalysisJustificationProtectedByMitigatingControl AnalysisJustification = "PROTECTED_BY_MITIGATING_CONTROL"
+	AnalysisJustificationRequiresConfiguration        AnalysisJustification = "REQUIRES_CONFIGURATION"
+	AnalysisJustificationRequiresDependency           AnalysisJustification = "REQUIRES_DEPENDENCY"
+	AnalysisJustificationRequiresEnvironment          AnalysisJustification = "REQUIRES_ENVIRONMENT"
 )
 
-func (a AnalysisState) MarshalJSON() ([]byte, error) {
-	return json.Marshal(a.String())
-}
+type AnalysisResponse string
 
-func (a *AnalysisState) UnmarshalJSON(bytes []byte) error {
-	var val string
-	if err := json.Unmarshal(bytes, &val); err != nil {
-		return err
-	}
+const (
+	AnalysisResponseCanNotFix           = "CAN_NOT_FIX"
+	AnalysisResponseNotSet              = "NOT_SET"
+	AnalysisResponseRollback            = "ROLLBACK"
+	AnalysisResponseUpdate              = "UPDATE"
+	AnalysisResponseWillNotFix          = "WILL_NOT_FIX"
+	AnalysisResponseWorkaroundAvailable = "WORKAROUND_AVAILABLE"
+)
 
-	switch val {
-	case AnalysisStateNotSet.String():
-		*a = AnalysisStateNotSet
-	case AnalysisStateInTriage.String():
-		*a = AnalysisStateInTriage
-	case AnalysisStateExploitable.String():
-		*a = AnalysisStateExploitable
-	case AnalysisStateNotAffected.String():
-		*a = AnalysisStateNotAffected
-	case AnalysisStateFalsePositive.String():
-		*a = AnalysisStateFalsePositive
-	default:
-		return fmt.Errorf("invalid value: %s", val)
-	}
+type AnalysisState string
 
-	return nil
-}
-
-func (a AnalysisState) String() string {
-	switch a {
-	case AnalysisStateNotSet:
-		return "NOT_SET"
-	case AnalysisStateInTriage:
-		return "IN_TRIAGE"
-	case AnalysisStateExploitable:
-		return "EXPLOITABLE"
-	case AnalysisStateNotAffected:
-		return "NOT_AFFECTED"
-	case AnalysisStateFalsePositive:
-		return "FALSE_POSITIVE"
-	default:
-		panic(a)
-	}
-}
+const (
+	AnalysisStateExploitable   AnalysisState = "EXPLOITABLE"
+	AnalysisStateFalsePositive AnalysisState = "FALSE_POSITIVE"
+	AnalysisStateInTriage      AnalysisState = "IN_TRIAGE"
+	AnalysisStateNotAffected   AnalysisState = "NOT_AFFECTED"
+	AnalysisStateNotSet        AnalysisState = "NOT_SET"
+	AnalysisStateResolved      AnalysisState = "RESOLVED"
+)
 
 type Analysis struct {
 	Comments   []AnalysisComment `json:"comments"`
@@ -107,12 +88,14 @@ type AnalysisComment struct {
 }
 
 type AnalysisRequest struct {
-	Component     uuid.UUID     `json:"component"`
-	Project       uuid.UUID     `json:"project"`
-	Vulnerability uuid.UUID     `json:"vulnerability"`
-	Comment       string        `json:"comment,omitempty"`
-	State         AnalysisState `json:"analysisState,omitempty"`
-	Suppressed    bool          `json:"isSuppressed"`
+	Component     uuid.UUID             `json:"component"`
+	Project       uuid.UUID             `json:"project"`
+	Vulnerability uuid.UUID             `json:"vulnerability"`
+	Comment       string                `json:"comment,omitempty"`
+	State         AnalysisState         `json:"analysisState,omitempty"`
+	Justification AnalysisJustification `json:"analysisJustification,omitempty"`
+	Response      AnalysisResponse      `json:"analysisResponse,omitempty"`
+	Suppressed    *bool                 `json:"isSuppressed,omitempty"`
 }
 
 type AnalysisService struct {

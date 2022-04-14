@@ -227,12 +227,12 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error
 		}
 	}
 
-	apiResponse, err := c.newAPIResponse(res)
+	apiRes, err := c.newAPIResponse(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse, nil
+	return apiRes, nil
 }
 
 type apiResponse struct {

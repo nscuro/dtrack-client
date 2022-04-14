@@ -19,7 +19,7 @@ func (e APIError) Error() string {
 }
 
 func checkResponse(res *http.Response) error {
-	if res.StatusCode < 300 {
+	if res.StatusCode >= 200 && res.StatusCode < 300 {
 		return nil
 	}
 
