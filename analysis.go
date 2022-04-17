@@ -80,7 +80,7 @@ func (a *Analysis) UnmarshalJSON(bytes []byte) error {
 		Suppressed:    fa.Suppressed,
 	}
 
-	if fa.State == AnalysisStateNotSet && fa.StateAlias != AnalysisStateNotSet {
+	if fa.State == "" && fa.StateAlias != "" {
 		a.State = fa.StateAlias
 	}
 
