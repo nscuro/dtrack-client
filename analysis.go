@@ -26,12 +26,12 @@ const (
 type AnalysisResponse string
 
 const (
-	AnalysisResponseCanNotFix           = "CAN_NOT_FIX"
-	AnalysisResponseNotSet              = "NOT_SET"
-	AnalysisResponseRollback            = "ROLLBACK"
-	AnalysisResponseUpdate              = "UPDATE"
-	AnalysisResponseWillNotFix          = "WILL_NOT_FIX"
-	AnalysisResponseWorkaroundAvailable = "WORKAROUND_AVAILABLE"
+	AnalysisResponseCanNotFix           AnalysisResponse = "CAN_NOT_FIX"
+	AnalysisResponseNotSet              AnalysisResponse = "NOT_SET"
+	AnalysisResponseRollback            AnalysisResponse = "ROLLBACK"
+	AnalysisResponseUpdate              AnalysisResponse = "UPDATE"
+	AnalysisResponseWillNotFix          AnalysisResponse = "WILL_NOT_FIX"
+	AnalysisResponseWorkaroundAvailable AnalysisResponse = "WORKAROUND_AVAILABLE"
 )
 
 type AnalysisState string
