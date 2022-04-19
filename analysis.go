@@ -46,7 +46,7 @@ const (
 )
 
 type Analysis struct {
-	Comments      []AnalysisComment     `json:"comments"`
+	Comments      []AnalysisComment     `json:"analysisComments"`
 	State         AnalysisState         `json:"analysisState"`
 	Justification AnalysisJustification `json:"analysisJustification"`
 	Response      AnalysisResponse      `json:"analysisResponse"`
@@ -57,7 +57,7 @@ type Analysis struct {
 // Instead of `analysisState`, the state of an analysis is provided as `state` field.
 // See https://github.com/DependencyTrack/dependency-track/blob/4.3.2/src/main/java/org/dependencytrack/model/Finding.java#L116
 type findingAnalysis struct {
-	Comments      []AnalysisComment     `json:"comments"`
+	Comments      []AnalysisComment     `json:"analysisComments"`
 	State         AnalysisState         `json:"analysisState"`
 	Justification AnalysisJustification `json:"analysisJustification"`
 	Response      AnalysisResponse      `json:"analysisResponse"`
@@ -90,7 +90,7 @@ func (a *Analysis) UnmarshalJSON(bytes []byte) error {
 type AnalysisComment struct {
 	Comment   string `json:"comment"`
 	Commenter string `json:"commenter"`
-	Timestamp string `json:"timestamp"`
+	Timestamp int    `json:"timestamp"`
 }
 
 type AnalysisRequest struct {
