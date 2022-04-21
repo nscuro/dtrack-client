@@ -36,13 +36,14 @@ type Component struct {
 	PURL      string `json:"purl"`
 	SWIDTagID string `json:"swidTagId"`
 
-	Internal           bool     `json:"isInternal"`
-	Description        string   `json:"description"`
-	Copyright          string   `json:"copyright"`
-	License            string   `json:"license"`
-	ResolvedLicense    *License `json:"resolvedLicense"`
-	DirectDependencies string   `json:"directDependencies"`
-	Notes              string   `json:"notes"`
+	Internal           bool                     `json:"isInternal"`
+	Description        string                   `json:"description"`
+	Copyright          string                   `json:"copyright"`
+	License            string                   `json:"license"`
+	RepositoryMeta     *RepositoryMetaComponent `json:"repositoryMeta"`
+	ResolvedLicense    *License                 `json:"resolvedLicense"`
+	DirectDependencies string                   `json:"directDependencies"`
+	Notes              string                   `json:"notes"`
 }
 
 type ComponentsPage struct {
