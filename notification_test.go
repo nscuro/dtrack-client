@@ -1,6 +1,7 @@
 package dtrack
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -8,7 +9,7 @@ import (
 
 func TestParseNotification(t *testing.T) {
 	t.Run("BomConsumed", func(t *testing.T) {
-		notification, err := ParseNotification([]byte(`
+		notification, err := ParseNotification(strings.NewReader(`
 		{
 		  "notification": {
 			"level": "INFORMATIONAL",
@@ -42,7 +43,7 @@ func TestParseNotification(t *testing.T) {
 	})
 
 	t.Run("BomConsumed", func(t *testing.T) {
-		notification, err := ParseNotification([]byte(`
+		notification, err := ParseNotification(strings.NewReader(`
 		{
 		  "notification": {
 			"level": "INFORMATIONAL",
@@ -76,7 +77,7 @@ func TestParseNotification(t *testing.T) {
 	})
 
 	t.Run("NewVulnerableDependency", func(t *testing.T) {
-		notification, err := ParseNotification([]byte(`
+		notification, err := ParseNotification(strings.NewReader(`
 		{
 		  "notification": {
 			"level": "INFORMATIONAL",
@@ -109,10 +110,16 @@ func TestParseNotification(t *testing.T) {
 				  "description": "Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.",
 				  "cvssv2": 5.8,
 				  "severity": "MEDIUM",
-				  "cwe": {
-					"cweId": 20,
-					"name": "Improper Input Validation"
-				  }
+				  "cwe": [
+					{
+				  		"cweId": 20,
+				  		"name": "Improper Input Validation"
+					},
+					{
+						"cweId": 66,
+						"name": "Foobar"
+					}
+				  ]
 				},
 				{
 				  "uuid": "ca318ca7-616f-4af0-9c6b-15b8e208c586",
@@ -140,7 +147,7 @@ func TestParseNotification(t *testing.T) {
 	})
 
 	t.Run("NewVulnerability", func(t *testing.T) {
-		notification, err := ParseNotification([]byte(`
+		notification, err := ParseNotification(strings.NewReader(`
 		{
 		  "notification": {
 			"level": "INFORMATIONAL",
@@ -167,10 +174,16 @@ func TestParseNotification(t *testing.T) {
 				"description": "Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.",
 				"cvssv2": 5.8,
 				"severity": "MEDIUM",
-				"cwe": {
-				  "cweId": 20,
-				  "name": "Improper Input Validation"
-				}
+				"cwe": [
+					{
+				  		"cweId": 20,
+				  		"name": "Improper Input Validation"
+					},
+					{
+						"cweId": 66,
+						"name": "Foobar"
+					}
+				]
 			  },
 			  "affectedProjects": [
 				{

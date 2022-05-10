@@ -10,45 +10,36 @@ type UserService struct {
 	client *Client
 }
 
-func (u UserService) Login(ctx context.Context, username, password string) (string, error) {
+func (us UserService) Login(ctx context.Context, username, password string) (token string, err error) {
 	body := url.Values{}
 	body.Set("username", username)
 	body.Set("password", password)
 
-	req, err := u.client.newRequest(ctx, http.MethodPost, "/api/v1/user/login", withBody(body))
+	req, err := us.client.newRequest(ctx, http.MethodPost, "/api/v1/user/login", withBody(body))
 	if err != nil {
-		return "", err
+		return
 	}
 
 	req.Header.Set("Accept", "*/*")
 
-	var token string
-	_, err = u.client.doRequest(req, &token)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	_, err = us.client.doRequest(req, &token)
+	return
 }
 
-func (u UserService) ForceChangePassword(ctx context.Context, username, password, newPassword string) error {
+func (us UserService) ForceChangePassword(ctx context.Context, username, password, newPassword string) (err error) {
 	body := url.Values{}
 	body.Set("username", username)
 	body.Set("password", password)
 	body.Set("newPassword", newPassword)
 	body.Set("confirmPassword", newPassword)
 
-	req, err := u.client.newRequest(ctx, http.MethodPost, "/api/v1/user/forceChangePassword", withBody(body))
+	req, err := us.client.newRequest(ctx, http.MethodPost, "/api/v1/user/forceChangePassword", withBody(body))
 	if err != nil {
-		return err
+		return
 	}
 
 	req.Header.Set("Accept", "*/*")
 
-	_, err = u.client.doRequest(req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = us.client.doRequest(req, nil)
+	return
 }

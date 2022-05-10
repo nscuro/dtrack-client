@@ -15,78 +15,56 @@ type ProjectProperty struct {
 	Description string `json:"description"`
 }
 
-type ProjectPropertiesPage struct {
-	Properties []ProjectProperty
-	TotalCount int
-}
-
 type ProjectPropertyService struct {
 	client *Client
 }
 
-func (p ProjectPropertyService) GetAll(ctx context.Context, projectUUID uuid.UUID, po PageOptions) (*ProjectPropertiesPage, error) {
-	req, err := p.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withPageOptions(po))
+func (ps ProjectPropertyService) GetAll(ctx context.Context, projectUUID uuid.UUID, po PageOptions) (p Page[ProjectProperty], err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withPageOptions(po))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var properties []ProjectProperty
-	res, err := p.client.doRequest(req, &properties)
+	res, err := ps.client.doRequest(req, &p.Items)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return &ProjectPropertiesPage{
-		Properties: properties,
-		TotalCount: res.TotalCount,
-	}, nil
+	p.TotalCount = res.TotalCount
+	return
 }
 
-func (p ProjectPropertyService) Create(ctx context.Context, projectUUID uuid.UUID, property ProjectProperty) (*ProjectProperty, error) {
-	req, err := p.client.newRequest(ctx, http.MethodPut, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
+func (ps ProjectPropertyService) Create(ctx context.Context, projectUUID uuid.UUID, property ProjectProperty) (p ProjectProperty, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPut, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var createdProperty ProjectProperty
-	_, err = p.client.doRequest(req, &createdProperty)
-	if err != nil {
-		return nil, err
-	}
-
-	return &createdProperty, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
-func (p ProjectPropertyService) Update(ctx context.Context, projectUUID uuid.UUID, property ProjectProperty) (*ProjectProperty, error) {
-	req, err := p.client.newRequest(ctx, http.MethodPost, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
+func (ps ProjectPropertyService) Update(ctx context.Context, projectUUID uuid.UUID, property ProjectProperty) (p ProjectProperty, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPost, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var updatedProperty ProjectProperty
-	_, err = p.client.doRequest(req, &updatedProperty)
-	if err != nil {
-		return nil, err
-	}
-
-	return &updatedProperty, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
-func (p ProjectPropertyService) Delete(ctx context.Context, projectUUID uuid.UUID, groupName, propertyName string) error {
+func (ps ProjectPropertyService) Delete(ctx context.Context, projectUUID uuid.UUID, groupName, propertyName string) (err error) {
 	property := ProjectProperty{
 		Group: groupName,
 		Name:  propertyName,
 	}
 
-	req, err := p.client.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
+	req, err := ps.client.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/api/v1/project/%s/property", projectUUID), withBody(property))
 	if err != nil {
-		return err
+		return
 	}
 
-	_, err = p.client.doRequest(req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = ps.client.doRequest(req, nil)
+	return
 }

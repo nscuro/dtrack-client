@@ -108,38 +108,28 @@ type AnalysisService struct {
 	client *Client
 }
 
-func (a AnalysisService) Get(ctx context.Context, component, project, vulnerability uuid.UUID) (*Analysis, error) {
+func (as AnalysisService) Get(ctx context.Context, component, project, vulnerability uuid.UUID) (a Analysis, err error) {
 	params := map[string]string{
 		"component":     component.String(),
 		"project":       project.String(),
 		"vulnerability": vulnerability.String(),
 	}
 
-	req, err := a.client.newRequest(ctx, http.MethodGet, "/api/v1/analysis", withParams(params))
+	req, err := as.client.newRequest(ctx, http.MethodGet, "/api/v1/analysis", withParams(params))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var analysis Analysis
-	_, err = a.client.doRequest(req, &analysis)
-	if err != nil {
-		return nil, err
-	}
-
-	return &analysis, nil
+	_, err = as.client.doRequest(req, &a)
+	return
 }
 
-func (a AnalysisService) Create(ctx context.Context, analysisReq AnalysisRequest) (*Analysis, error) {
-	req, err := a.client.newRequest(ctx, http.MethodPut, "/api/v1/analysis", withBody(analysisReq))
+func (as AnalysisService) Create(ctx context.Context, analysisReq AnalysisRequest) (a Analysis, err error) {
+	req, err := as.client.newRequest(ctx, http.MethodPut, "/api/v1/analysis", withBody(analysisReq))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var analysis Analysis
-	_, err = a.client.doRequest(req, &analysis)
-	if err != nil {
-		return nil, err
-	}
-
-	return &analysis, nil
+	_, err = as.client.doRequest(req, &a)
+	return
 }

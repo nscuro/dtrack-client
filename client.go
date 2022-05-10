@@ -165,6 +165,11 @@ func withBody(body interface{}) requestOption {
 	}
 }
 
+type Page[T any] struct {
+	Items      []T
+	TotalCount int
+}
+
 type PageOptions struct {
 	Offset     int // Offset of the elements to return
 	PageNumber int // Page to return
@@ -191,7 +196,33 @@ func withPageOptions(po PageOptions) requestOption {
 	}
 }
 
-func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error) {
+// FetchAll is a convenience function to retrieve all items of a paginated API resource.
+func FetchAll[T any](f func(po PageOptions) (Page[T], error)) (items []T, err error) {
+	const pageSize = 50
+	pageNumber := 1
+
+	for {
+		page, fErr := f(PageOptions{
+			PageNumber: pageNumber,
+			PageSize:   pageSize,
+		})
+		if fErr != nil {
+			err = fErr
+			break
+		}
+
+		items = append(items, page.Items...)
+		if len(items) > page.TotalCount {
+			break
+		}
+
+		pageNumber++
+	}
+
+	return
+}
+
+func (c Client) doRequest(req *http.Request, v interface{}) (a apiResponse, err error) {
 	if c.debug {
 		reqDump, _ := httputil.DumpRequestOut(req, true)
 		log.Printf("sending request:\n>>>>>>\n%s\n>>>>>>\n", string(reqDump))
@@ -199,7 +230,7 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return
 	}
 	defer res.Body.Close()
 
@@ -208,31 +239,29 @@ func (c Client) doRequest(req *http.Request, v interface{}) (*apiResponse, error
 		log.Printf("received response:\n<<<<<<\n%s\n<<<<<<\n", string(resDump))
 	}
 
-	if err = checkResponse(res); err != nil {
-		return nil, err
+	err = checkResponse(res)
+	if err != nil {
+		return
 	}
 
 	if v != nil {
 		switch vt := v.(type) {
 		case *string:
-			if content, err := io.ReadAll(res.Body); err != nil {
-				return nil, err
+			if content, vErr := io.ReadAll(res.Body); vErr != nil {
+				err = vErr
+				return
 			} else {
 				*vt = strings.TrimSpace(string(content))
 			}
 		default:
 			if err = json.NewDecoder(res.Body).Decode(v); err != nil {
-				return nil, err
+				return
 			}
 		}
 	}
 
-	apiRes, err := c.newAPIResponse(res)
-	if err != nil {
-		return nil, err
-	}
-
-	return apiRes, nil
+	a, err = c.newAPIResponse(res)
+	return
 }
 
 type apiResponse struct {
@@ -241,19 +270,20 @@ type apiResponse struct {
 	TotalCount int
 }
 
-func (c Client) newAPIResponse(res *http.Response) (*apiResponse, error) {
-	response := apiResponse{Response: res}
+func (c Client) newAPIResponse(res *http.Response) (a apiResponse, err error) {
+	a = apiResponse{Response: res}
 
-	totalCount, ok := response.Header["X-Total-Count"]
+	totalCount, ok := a.Header["X-Total-Count"]
 	if ok && len(totalCount) > 0 {
-		totalCountVal, err := strconv.Atoi(totalCount[0])
-		if err != nil {
-			return nil, err
+		totalCountVal, vErr := strconv.Atoi(totalCount[0])
+		if vErr != nil {
+			err = vErr
+			return
 		}
-		response.TotalCount = totalCountVal
+		a.TotalCount = totalCountVal
 	}
 
-	return &response, nil
+	return
 }
 
 type ClientOption func(*Client) error

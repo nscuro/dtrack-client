@@ -3,6 +3,7 @@ package dtrack
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 )
 
 type Notification struct {
@@ -25,17 +26,17 @@ type notificationJSON struct {
 	Subject   json.RawMessage `json:"subject"`
 }
 
-func ParseNotification(notification []byte) (*Notification, error) {
-	nw := struct {
+func ParseNotification(reader io.Reader) (n Notification, err error) {
+	wrapper := struct {
 		Notification notificationJSON `json:"notification"`
 	}{}
-	err := json.Unmarshal(notification, &nw)
+	err = json.NewDecoder(reader).Decode(&wrapper)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	var subject interface{}
-	switch nw.Notification.Group {
+	switch wrapper.Notification.Group {
 	case "BOM_CONSUMED":
 		fallthrough
 	case "BOM_PROCESSED":
@@ -45,21 +46,23 @@ func ParseNotification(notification []byte) (*Notification, error) {
 	case "NEW_VULNERABILITY":
 		subject = &NewVulnerabilitySubject{}
 	default:
-		return nil, fmt.Errorf("unknown notification group %s", nw.Notification.Group)
+		err = fmt.Errorf("unknown notification group %s", wrapper.Notification.Group)
+		return
 	}
 
-	err = json.Unmarshal(nw.Notification.Subject, subject)
+	err = json.Unmarshal(wrapper.Notification.Subject, subject)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal subject: %w", err)
+		err = fmt.Errorf("failed to unmarshal subject: %w", err)
+		return
 	}
 
-	return &Notification{
-		Level:     nw.Notification.Level,
-		Scope:     nw.Notification.Scope,
-		Group:     nw.Notification.Group,
-		Timestamp: nw.Notification.Timestamp,
-		Title:     nw.Notification.Title,
-		Content:   nw.Notification.Content,
+	return Notification{
+		Level:     wrapper.Notification.Level,
+		Scope:     wrapper.Notification.Scope,
+		Group:     wrapper.Notification.Group,
+		Timestamp: wrapper.Notification.Timestamp,
+		Title:     wrapper.Notification.Title,
+		Content:   wrapper.Notification.Content,
 		Subject:   subject,
 	}, nil
 }

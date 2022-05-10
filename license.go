@@ -22,29 +22,21 @@ type License struct {
 	SeeAlso             []string `json:"seeAlso"`
 }
 
-type LicensePage struct {
-	Licenses   []License
-	TotalCount int
-}
-
 type LicenseService struct {
 	client *Client
 }
 
-func (l LicenseService) GetAll(ctx context.Context, po PageOptions) (*LicensePage, error) {
+func (l LicenseService) GetAll(ctx context.Context, po PageOptions) (p Page[License], err error) {
 	req, err := l.client.newRequest(ctx, http.MethodGet, "/api/v1/license", withPageOptions(po))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var licenses []License
-	res, err := l.client.doRequest(req, &licenses)
+	res, err := l.client.doRequest(req, &p.Items)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return &LicensePage{
-		Licenses:   licenses,
-		TotalCount: res.TotalCount,
-	}, nil
+	p.TotalCount = res.TotalCount
+	return
 }

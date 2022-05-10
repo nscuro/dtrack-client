@@ -27,16 +27,12 @@ type AboutService struct {
 	client *Client
 }
 
-func (a AboutService) Get(ctx context.Context) (*About, error) {
-	req, err := a.client.newRequest(ctx, http.MethodGet, "/api/version", withoutAuth())
+func (as AboutService) Get(ctx context.Context) (a About, err error) {
+	req, err := as.client.newRequest(ctx, http.MethodGet, "/api/version", withoutAuth())
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var about About
-	if _, err = a.client.doRequest(req, &about); err != nil {
-		return nil, err
-	}
-
-	return &about, nil
+	_, err = as.client.doRequest(req, &a)
+	return
 }

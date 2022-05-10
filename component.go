@@ -45,44 +45,31 @@ type Component struct {
 	Notes              string   `json:"notes"`
 }
 
-type ComponentsPage struct {
-	Components []Component
-	TotalCount int
-}
-
 type ComponentService struct {
 	client *Client
 }
 
-func (c ComponentService) Get(ctx context.Context, componentUUID uuid.UUID) (*Component, error) {
-	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/%s", componentUUID))
+func (cs ComponentService) Get(ctx context.Context, componentUUID uuid.UUID) (c Component, err error) {
+	req, err := cs.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/%s", componentUUID))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var component Component
-	_, err = c.client.doRequest(req, &component)
-	if err != nil {
-		return nil, err
-	}
-
-	return &component, nil
+	_, err = cs.client.doRequest(req, &c)
+	return
 }
 
-func (c ComponentService) GetAll(ctx context.Context, projectUUID uuid.UUID, po PageOptions) (*ComponentsPage, error) {
-	req, err := c.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", projectUUID), withPageOptions(po))
+func (cs ComponentService) GetAll(ctx context.Context, projectUUID uuid.UUID, po PageOptions) (p Page[Component], err error) {
+	req, err := cs.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/component/project/%s", projectUUID), withPageOptions(po))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var components []Component
-	res, err := c.client.doRequest(req, &components)
+	res, err := cs.client.doRequest(req, &p.Items)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return &ComponentsPage{
-		Components: components,
-		TotalCount: res.TotalCount,
-	}, nil
+	p.TotalCount = res.TotalCount
+	return
 }

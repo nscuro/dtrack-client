@@ -28,110 +28,78 @@ type Project struct {
 	Active             bool              `json:"active"`
 }
 
-type ProjectsPage struct {
-	Projects   []Project
-	TotalCount int
-}
-
 type ProjectService struct {
 	client *Client
 }
 
-func (p ProjectService) Get(ctx context.Context, projectUUID uuid.UUID) (*Project, error) {
-	req, err := p.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", projectUUID))
+func (ps ProjectService) Get(ctx context.Context, projectUUID uuid.UUID) (p Project, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/project/%s", projectUUID))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var project Project
-	_, err = p.client.doRequest(req, &project)
-	if err != nil {
-		return nil, err
-	}
-
-	return &project, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
-func (p ProjectService) GetAll(ctx context.Context, po PageOptions) (*ProjectsPage, error) {
-	req, err := p.client.newRequest(ctx, http.MethodGet, "/api/v1/project", withPageOptions(po))
+func (ps ProjectService) GetAll(ctx context.Context, po PageOptions) (p Page[Project], err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodGet, "/api/v1/project", withPageOptions(po))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var projects []Project
-	res, err := p.client.doRequest(req, &projects)
+	res, err := ps.client.doRequest(req, &p.Items)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return &ProjectsPage{
-		TotalCount: res.TotalCount,
-		Projects:   projects,
-	}, nil
+	p.TotalCount = res.TotalCount
+	return
 }
 
-func (p ProjectService) Create(ctx context.Context, project Project) (*Project, error) {
-	req, err := p.client.newRequest(ctx, http.MethodPut, "/api/v1/project", withBody(project))
+func (ps ProjectService) Create(ctx context.Context, project Project) (p Project, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPut, "/api/v1/project", withBody(project))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var createdProject Project
-	_, err = p.client.doRequest(req, &createdProject)
-	if err != nil {
-		return nil, err
-	}
-
-	return &createdProject, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
-func (p ProjectService) Update(ctx context.Context, project Project) (*Project, error) {
-	req, err := p.client.newRequest(ctx, http.MethodPost, "/api/v1/project", withBody(project))
+func (ps ProjectService) Update(ctx context.Context, project Project) (p Project, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPost, "/api/v1/project", withBody(project))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var createdProject Project
-	_, err = p.client.doRequest(req, &createdProject)
-	if err != nil {
-		return nil, err
-	}
-
-	return &createdProject, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
-func (p ProjectService) Delete(ctx context.Context, projectUUID uuid.UUID) error {
-	req, err := p.client.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/api/v1/project/%s", projectUUID))
+func (ps ProjectService) Delete(ctx context.Context, projectUUID uuid.UUID) (err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/api/v1/project/%s", projectUUID))
 	if err != nil {
-		return err
+		return
 	}
 
-	_, err = p.client.doRequest(req, nil)
-	if err != nil {
-		return err
-	}
-
+	_, err = ps.client.doRequest(req, nil)
 	return nil
 }
 
-func (p ProjectService) Lookup(ctx context.Context, name, version string) (*Project, error) {
+func (ps ProjectService) Lookup(ctx context.Context, name, version string) (p Project, err error) {
 	params := map[string]string{
 		"name":    name,
 		"version": version,
 	}
 
-	req, err := p.client.newRequest(ctx, http.MethodGet, "/api/v1/project/lookup", withParams(params))
+	req, err := ps.client.newRequest(ctx, http.MethodGet, "/api/v1/project/lookup", withParams(params))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var project Project
-	_, err = p.client.doRequest(req, &project)
-	if err != nil {
-		return nil, err
-	}
-
-	return &project, nil
+	_, err = ps.client.doRequest(req, &p)
+	return
 }
 
 type ProjectCloneRequest struct {
@@ -144,16 +112,12 @@ type ProjectCloneRequest struct {
 	IncludeTags         bool      `json:"includeTags"`
 }
 
-func (p ProjectService) Clone(ctx context.Context, cloneReq ProjectCloneRequest) error {
-	req, err := p.client.newRequest(ctx, http.MethodPut, "/api/v1/project/clone", withBody(cloneReq))
+func (ps ProjectService) Clone(ctx context.Context, cloneReq ProjectCloneRequest) (err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPut, "/api/v1/project/clone", withBody(cloneReq))
 	if err != nil {
-		return err
+		return
 	}
 
-	_, err = p.client.doRequest(req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = ps.client.doRequest(req, nil)
+	return
 }

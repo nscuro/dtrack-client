@@ -53,61 +53,42 @@ type MetricsService struct {
 	client *Client
 }
 
-func (m MetricsService) LatestPortfolioMetrics(ctx context.Context) (*PortfolioMetrics, error) {
-	req, err := m.client.newRequest(ctx, http.MethodGet, "/api/v1/metrics/portfolio/current")
+func (ms MetricsService) LatestPortfolioMetrics(ctx context.Context) (m PortfolioMetrics, err error) {
+	req, err := ms.client.newRequest(ctx, http.MethodGet, "/api/v1/metrics/portfolio/current")
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var metrics PortfolioMetrics
-	_, err = m.client.doRequest(req, &metrics)
-	if err != nil {
-		return nil, err
-	}
-
-	return &metrics, nil
+	_, err = ms.client.doRequest(req, &m)
+	return
 }
 
-func (m MetricsService) PortfolioMetricsSince(ctx context.Context, date time.Time) ([]PortfolioMetrics, error) {
-	req, err := m.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/metrics/portfolio/since/%s", date.Format("20060102")))
+func (ms MetricsService) PortfolioMetricsSince(ctx context.Context, date time.Time) (m []PortfolioMetrics, err error) {
+	req, err := ms.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/metrics/portfolio/since/%s", date.Format("20060102")))
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var metrics []PortfolioMetrics
-	_, err = m.client.doRequest(req, &metrics)
-	if err != nil {
-		return nil, err
-	}
-
-	return metrics, nil
+	_, err = ms.client.doRequest(req, &m)
+	return
 }
 
-func (m MetricsService) PortfolioMetricsSinceDays(ctx context.Context, days uint) ([]PortfolioMetrics, error) {
-	req, err := m.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/metrics/portfolio/%d/days", days))
+func (ms MetricsService) PortfolioMetricsSinceDays(ctx context.Context, days uint) (m []PortfolioMetrics, err error) {
+	req, err := ms.client.newRequest(ctx, http.MethodGet, fmt.Sprintf("/api/v1/metrics/portfolio/%d/days", days))
 	if err != nil {
 		return nil, err
 	}
 
-	var metrics []PortfolioMetrics
-	_, err = m.client.doRequest(req, &metrics)
-	if err != nil {
-		return nil, err
-	}
-
-	return metrics, nil
+	_, err = ms.client.doRequest(req, &m)
+	return
 }
 
-func (m MetricsService) RefreshPortfolioMetrics(ctx context.Context) error {
-	req, err := m.client.newRequest(ctx, http.MethodGet, "/api/v1/metrics/portfolio/refresh")
+func (ms MetricsService) RefreshPortfolioMetrics(ctx context.Context) (err error) {
+	req, err := ms.client.newRequest(ctx, http.MethodGet, "/api/v1/metrics/portfolio/refresh")
 	if err != nil {
-		return err
+		return
 	}
 
-	_, err = m.client.doRequest(req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = ms.client.doRequest(req, nil)
+	return
 }

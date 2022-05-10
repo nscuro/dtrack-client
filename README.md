@@ -14,9 +14,10 @@ GO111MODULE=on go get github.com/nscuro/dtrack-client
 
 ## Compatibility
 
-|  Go   | Dependency-Track |
-| :---: | :--------------: |
-| 1.15+ |      4.0.0+      |
+| dtrack-client Version | Go Version | Dependency-Track Version |
+|:---------------------:|:----------:|:------------------------:|
+|        < 0.6.0        |   1.15+    |          4.0.0+          |
+|       >= 0.6.0        |   1.18+    |          4.5.0+          |
 
 ## Usage
 
