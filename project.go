@@ -84,7 +84,7 @@ func (ps ProjectService) Delete(ctx context.Context, projectUUID uuid.UUID) (err
 	}
 
 	_, err = ps.client.doRequest(req, nil)
-	return nil
+	return
 }
 
 func (ps ProjectService) Lookup(ctx context.Context, name, version string) (p Project, err error) {
