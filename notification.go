@@ -45,6 +45,12 @@ func ParseNotification(reader io.Reader) (n Notification, err error) {
 		subject = &NewVulnerableDependencySubject{}
 	case "NEW_VULNERABILITY":
 		subject = &NewVulnerabilitySubject{}
+	case "POLICY_VIOLATION":
+		subject = &PolicyViolationSubject{}
+	case "VEX_CONSUMED":
+		fallthrough
+	case "VEX_PROCESSED":
+		subject = &VEXSubject{}
 	default:
 		err = fmt.Errorf("unknown notification group %s", wrapper.Notification.Group)
 		return
@@ -86,4 +92,19 @@ type NewVulnerabilitySubject struct {
 	AffectedProjects []Project     `json:"affectedProjects"`
 	Component        Component     `json:"component"`
 	Vulnerability    Vulnerability `json:"vulnerability"`
+}
+
+type PolicyViolationSubject struct {
+	Component       Component       `json:"component"`
+	PolicyViolation PolicyViolation `json:"policyViolation"`
+	Project         Project         `json:"project"`
+}
+
+type VEXSubject struct {
+	VEX struct {
+		Content     string `json:"content"`
+		Format      string `json:"format"`
+		SpecVersion string `json:"specVersion"`
+	}
+	Project Project `json:"project"`
 }

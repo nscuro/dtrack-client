@@ -3,10 +3,11 @@ package dtrack_test
 import (
 	"context"
 	"encoding/base64"
-	"github.com/nscuro/dtrack-client"
+	"fmt"
 	"os"
-	"sync"
 	"time"
+
+	"github.com/nscuro/dtrack-client"
 )
 
 // This example demonstrates how to upload a Bill of Materials and wait for its processing to complete.
@@ -28,30 +29,42 @@ func Example_uploadBOM() {
 		panic(err)
 	}
 
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	var (
+		doneChan = make(chan struct{})
+		errChan  = make(chan error)
+		ticker   = time.NewTicker(1 * time.Second)
+		timeout  = time.After(30 * time.Second)
+	)
 
 	go func() {
-		defer wg.Done()
-		ticker := time.NewTicker(1 * time.Second)
-		timeout := time.After(30 * time.Second)
+		defer func() {
+			close(doneChan)
+			close(errChan)
+		}()
 
-	loop:
 		for {
 			select {
 			case <-ticker.C:
 				processing, err := client.BOM.IsBeingProcessed(context.TODO(), uploadToken)
 				if err != nil {
-					panic(err)
+					errChan <- err
+					return
 				}
 				if !processing {
-					break loop
+					doneChan <- struct{}{}
+					return
 				}
 			case <-timeout:
-				panic("timeout exceeded")
+				errChan <- fmt.Errorf("timeout exceeded")
+				return
 			}
 		}
 	}()
 
-	wg.Wait()
+	select {
+	case <-doneChan:
+		fmt.Println("bom processing completed")
+	case <-errChan:
+		fmt.Printf("failed to wait for bom processing: %v\n", err)
+	}
 }

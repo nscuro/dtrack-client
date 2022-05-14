@@ -35,6 +35,8 @@ type Client struct {
 	Finding         FindingService
 	License         LicenseService
 	Metrics         MetricsService
+	Policy          PolicyService
+	PolicyViolation PolicyViolationService
 	Project         ProjectService
 	ProjectProperty ProjectPropertyService
 	Repository      RepositoryService
@@ -74,6 +76,8 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	client.Finding = FindingService{client: &client}
 	client.License = LicenseService{client: &client}
 	client.Metrics = MetricsService{client: &client}
+	client.Policy = PolicyService{client: &client}
+	client.PolicyViolation = PolicyViolationService{client: &client}
 	client.Project = ProjectService{client: &client}
 	client.ProjectProperty = ProjectPropertyService{client: &client}
 	client.Repository = RepositoryService{client: &client}
@@ -196,32 +200,6 @@ func withPageOptions(po PageOptions) requestOption {
 	}
 }
 
-// FetchAll is a convenience function to retrieve all items of a paginated API resource.
-func FetchAll[T any](f func(po PageOptions) (Page[T], error)) (items []T, err error) {
-	const pageSize = 50
-	pageNumber := 1
-
-	for {
-		page, fErr := f(PageOptions{
-			PageNumber: pageNumber,
-			PageSize:   pageSize,
-		})
-		if fErr != nil {
-			err = fErr
-			break
-		}
-
-		items = append(items, page.Items...)
-		if len(items) > page.TotalCount {
-			break
-		}
-
-		pageNumber++
-	}
-
-	return
-}
-
 func (c Client) doRequest(req *http.Request, v interface{}) (a apiResponse, err error) {
 	if c.debug {
 		reqDump, _ := httputil.DumpRequestOut(req, true)
@@ -247,14 +225,15 @@ func (c Client) doRequest(req *http.Request, v interface{}) (a apiResponse, err 
 	if v != nil {
 		switch vt := v.(type) {
 		case *string:
-			if content, vErr := io.ReadAll(res.Body); vErr != nil {
-				err = vErr
-				return
-			} else {
+			if content, readErr := io.ReadAll(res.Body); readErr == nil {
 				*vt = strings.TrimSpace(string(content))
+			} else {
+				err = readErr
+				return
 			}
 		default:
-			if err = json.NewDecoder(res.Body).Decode(v); err != nil {
+			err = json.NewDecoder(res.Body).Decode(v)
+			if err != nil {
 				return
 			}
 		}
@@ -266,7 +245,6 @@ func (c Client) doRequest(req *http.Request, v interface{}) (a apiResponse, err 
 
 type apiResponse struct {
 	*http.Response
-
 	TotalCount int
 }
 
@@ -275,9 +253,9 @@ func (c Client) newAPIResponse(res *http.Response) (a apiResponse, err error) {
 
 	totalCount, ok := a.Header["X-Total-Count"]
 	if ok && len(totalCount) > 0 {
-		totalCountVal, vErr := strconv.Atoi(totalCount[0])
-		if vErr != nil {
-			err = vErr
+		totalCountVal, convErr := strconv.Atoi(totalCount[0])
+		if convErr != nil {
+			err = convErr
 			return
 		}
 		a.TotalCount = totalCountVal
@@ -290,6 +268,7 @@ type ClientOption func(*Client) error
 
 // WithDebug toggles the debug mode.
 // When enabled, HTTP requests and responses will be logged to stderr.
+// DO NOT USE IN PRODUCTION, authorization headers are not cleared!
 func WithDebug(debug bool) ClientOption {
 	return func(c *Client) error {
 		c.debug = debug

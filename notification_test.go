@@ -42,7 +42,7 @@ func TestParseNotification(t *testing.T) {
 		require.Equal(t, "<base64 encoded bom>", subject.BOM.Content)
 	})
 
-	t.Run("BomConsumed", func(t *testing.T) {
+	t.Run("BomProcessed", func(t *testing.T) {
 		notification, err := ParseNotification(strings.NewReader(`
 		{
 		  "notification": {
@@ -205,5 +205,59 @@ func TestParseNotification(t *testing.T) {
 		require.Equal(t, "941a93f5-e06b-4304-84de-4d788eeb4969", subject.Vulnerability.UUID.String())
 		require.Len(t, subject.AffectedProjects, 1)
 		require.Equal(t, "6fb1820f-5280-4577-ac51-40124aabe307", subject.AffectedProjects[0].UUID.String())
+	})
+
+	t.Run("PolicyViolation", func(t *testing.T) {
+		notification, err := ParseNotification(strings.NewReader(`
+		{
+		  "notification": {
+			"level": "INFORMATIONAL",
+			"scope": "PORTFOLIO",
+			"group": "POLICY_VIOLATION",
+			"timestamp": "2022-05-12T23:07:59.611303",
+			"title": "Policy Violation",
+			"content": "A operational policy violation occurred",
+			"subject": {
+			  "project": {
+				"uuid": "7a36e5c0-9f09-42dd-b401-360da56c2abe",
+				"name": "Acme Example",
+				"version": "1.0.0"
+			  },
+			  "component": {
+				"uuid": "4e04c695-9acd-46fc-9bf6-ed23d7eb551e",
+				"group": "apache",
+				"name": "axis",
+				"version": "1.4"
+			  },
+			  "policyViolation": {
+				"uuid": "c82fcb50-029a-4636-a657-96242b20680e",
+				"type": "OPERATIONAL",
+				"timestamp": "2022-05-12T20:34:46Z",
+				"policyCondition": {
+				  "uuid": "8e5c0a5b-71fb-45c5-afac-6c6a99742cbe",
+				  "subject": "COORDINATES",
+				  "operator": "MATCHES",
+				  "value": "{\"group\":\"apache\",\"name\":\"axis\",\"version\":\"*\"}",
+				  "policy": {
+					"uuid": "6d4c7398-689a-4ec7-b5c5-9abb6b5393e9",
+					"name": "Banned Components",
+					"violationState": "FAIL"
+				  }
+				}
+			  }
+			}
+		  }
+		}
+		`))
+		require.NoError(t, err)
+
+		require.IsType(t, &PolicyViolationSubject{}, notification.Subject)
+		subject := notification.Subject.(*PolicyViolationSubject)
+
+		require.Equal(t, "4e04c695-9acd-46fc-9bf6-ed23d7eb551e", subject.Component.UUID.String())
+		require.Equal(t, "7a36e5c0-9f09-42dd-b401-360da56c2abe", subject.Project.UUID.String())
+		require.Equal(t, "c82fcb50-029a-4636-a657-96242b20680e", subject.PolicyViolation.UUID.String())
+		require.Equal(t, "8e5c0a5b-71fb-45c5-afac-6c6a99742cbe", subject.PolicyViolation.PolicyCondition.UUID.String())
+		require.Equal(t, "6d4c7398-689a-4ec7-b5c5-9abb6b5393e9", subject.PolicyViolation.PolicyCondition.Policy.UUID.String())
 	})
 }

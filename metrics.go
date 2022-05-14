@@ -8,45 +8,38 @@ import (
 )
 
 type PortfolioMetrics struct {
-	FirstOccurrence int `json:"firstOccurrence"`
-	LastOccurrence  int `json:"lastOccurrence"`
-
-	InheritedRiskScore   float64 `json:"inheritedRiskScore"`
-	Vulnerabilities      int     `json:"vulnerabilities"`
-	VulnerableProjects   int     `json:"vulnerableProjects"`
-	VulnerableComponents int     `json:"vulnerableComponents"`
-	Projects             int     `json:"projects"`
-	Components           int     `json:"components"`
-	Suppressed           int     `json:"suppressed"`
-
-	Critical   int `json:"critical"`
-	High       int `json:"high"`
-	Medium     int `json:"medium"`
-	Low        int `json:"low"`
-	Unassigned int `json:"unassigned"`
-
-	FindingsTotal     int `json:"findingsTotal"`
-	FindingsAudited   int `json:"findingsAudited"`
-	FindingsUnaudited int `json:"findingsUnaudited"`
-
-	PolicyViolationsTotal     int `json:"policyViolationsTotal"`
-	PolicyViolationsFail      int `json:"policyViolationsFail"`
-	PolicyViolationsWarn      int `json:"policyViolationsWarn"`
-	PolicyViolationsInfo      int `json:"policyViolationsInfo"`
-	PolicyViolationsAudited   int `json:"policyViolationsAudited"`
-	PolicyViolationsUnaudited int `json:"policyViolationsUnaudited"`
-
-	PolicyViolationsSecurityTotal     int `json:"policyViolationsSecurityTotal"`
-	PolicyViolationsSecurityAudited   int `json:"policyViolationsSecurityAudited"`
-	PolicyViolationsSecurityUnaudited int `json:"policyViolationsSecurityUnaudited"`
-
-	PolicyViolationsLicenseTotal     int `json:"policyViolationsLicenseTotal"`
-	PolicyViolationsLicenseAudited   int `json:"policyViolationsLicenseAudited"`
-	PolicyViolationsLicenseUnaudited int `json:"policyViolationsLicenseUnaudited"`
-
-	PolicyViolationsOperationalTotal     int `json:"policyViolationsOperationalTotal"`
-	PolicyViolationsOperationalAudited   int `json:"policyViolationsOperationalAudited"`
-	PolicyViolationsOperationalUnaudited int `json:"policyViolationsOperationalUnaudited"`
+	FirstOccurrence                      int     `json:"firstOccurrence"`
+	LastOccurrence                       int     `json:"lastOccurrence"`
+	InheritedRiskScore                   float64 `json:"inheritedRiskScore"`
+	Vulnerabilities                      int     `json:"vulnerabilities"`
+	VulnerableProjects                   int     `json:"vulnerableProjects"`
+	VulnerableComponents                 int     `json:"vulnerableComponents"`
+	Projects                             int     `json:"projects"`
+	Components                           int     `json:"components"`
+	Suppressed                           int     `json:"suppressed"`
+	Critical                             int     `json:"critical"`
+	High                                 int     `json:"high"`
+	Medium                               int     `json:"medium"`
+	Low                                  int     `json:"low"`
+	Unassigned                           int     `json:"unassigned"`
+	FindingsTotal                        int     `json:"findingsTotal"`
+	FindingsAudited                      int     `json:"findingsAudited"`
+	FindingsUnaudited                    int     `json:"findingsUnaudited"`
+	PolicyViolationsTotal                int     `json:"policyViolationsTotal"`
+	PolicyViolationsFail                 int     `json:"policyViolationsFail"`
+	PolicyViolationsWarn                 int     `json:"policyViolationsWarn"`
+	PolicyViolationsInfo                 int     `json:"policyViolationsInfo"`
+	PolicyViolationsAudited              int     `json:"policyViolationsAudited"`
+	PolicyViolationsUnaudited            int     `json:"policyViolationsUnaudited"`
+	PolicyViolationsSecurityTotal        int     `json:"policyViolationsSecurityTotal"`
+	PolicyViolationsSecurityAudited      int     `json:"policyViolationsSecurityAudited"`
+	PolicyViolationsSecurityUnaudited    int     `json:"policyViolationsSecurityUnaudited"`
+	PolicyViolationsLicenseTotal         int     `json:"policyViolationsLicenseTotal"`
+	PolicyViolationsLicenseAudited       int     `json:"policyViolationsLicenseAudited"`
+	PolicyViolationsLicenseUnaudited     int     `json:"policyViolationsLicenseUnaudited"`
+	PolicyViolationsOperationalTotal     int     `json:"policyViolationsOperationalTotal"`
+	PolicyViolationsOperationalAudited   int     `json:"policyViolationsOperationalAudited"`
+	PolicyViolationsOperationalUnaudited int     `json:"policyViolationsOperationalUnaudited"`
 }
 
 type MetricsService struct {
