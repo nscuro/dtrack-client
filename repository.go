@@ -6,7 +6,11 @@ import (
 )
 
 type RepositoryMetaComponent struct {
-	LatestVersion string `json:"latestVersion"`
+	LastCheck      int64  `json:"lastCheck"`
+	LatestVersion  string `json:"latestVersion"`
+	Name           string `json:"name"`
+	Published      int64  `json:"published"`
+	RepositoryType string `json:"repositoryType"`
 }
 
 type RepositoryService struct {
