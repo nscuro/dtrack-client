@@ -50,6 +50,7 @@ type Analysis struct {
 	State         AnalysisState         `json:"analysisState"`
 	Justification AnalysisJustification `json:"analysisJustification"`
 	Response      AnalysisResponse      `json:"analysisResponse"`
+	Details       string                `json:"analysisDetails"`
 	Suppressed    bool                  `json:"isSuppressed"`
 }
 
@@ -61,6 +62,7 @@ type findingAnalysis struct {
 	State         AnalysisState         `json:"analysisState"`
 	Justification AnalysisJustification `json:"analysisJustification"`
 	Response      AnalysisResponse      `json:"analysisResponse"`
+	Details       string                `json:"analysisDetails"`
 	StateAlias    AnalysisState         `json:"state"`
 	Suppressed    bool                  `json:"isSuppressed"`
 }
@@ -77,6 +79,7 @@ func (a *Analysis) UnmarshalJSON(bytes []byte) error {
 		State:         fa.State,
 		Justification: fa.Justification,
 		Response:      fa.Response,
+		Details:       fa.Details,
 		Suppressed:    fa.Suppressed,
 	}
 
@@ -101,6 +104,7 @@ type AnalysisRequest struct {
 	State         AnalysisState         `json:"analysisState,omitempty"`
 	Justification AnalysisJustification `json:"analysisJustification,omitempty"`
 	Response      AnalysisResponse      `json:"analysisResponse,omitempty"`
+	Details       string                `json:"analysisDetails,omitempty"`
 	Suppressed    *bool                 `json:"isSuppressed,omitempty"`
 }
 
