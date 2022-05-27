@@ -8,18 +8,17 @@ import (
 )
 
 type License struct {
-	UUID     uuid.UUID `json:"uuid"`
-	Name     string    `json:"name"`
-	Text     string    `json:"text"`
-	Template string    `json:"template"`
-	Header   string    `json:"header"`
-	Comment  string    `json:"comment"`
-
-	LicenseID           string   `json:"licenseId"`
-	OSIApproved         bool     `json:"isOsiApproved"`
-	FSFLibre            bool     `json:"isFsfLibre"`
-	DeprecatedLicenseID bool     `json:"isDeprecatedLicenseId"`
-	SeeAlso             []string `json:"seeAlso"`
+	UUID                uuid.UUID `json:"uuid"`
+	Name                string    `json:"name"`
+	Text                string    `json:"text"`
+	Template            string    `json:"template"`
+	Header              string    `json:"header"`
+	Comment             string    `json:"comment"`
+	LicenseID           string    `json:"licenseId"`
+	OSIApproved         bool      `json:"isOsiApproved"`
+	FSFLibre            bool      `json:"isFsfLibre"`
+	DeprecatedLicenseID bool      `json:"isDeprecatedLicenseId"`
+	SeeAlso             []string  `json:"seeAlso"`
 }
 
 type LicenseService struct {

@@ -9,19 +9,17 @@ import (
 )
 
 type Project struct {
-	UUID        uuid.UUID `json:"uuid,omitempty"`
-	Author      string    `json:"author,omitempty"`
-	Publisher   string    `json:"publisher,omitempty"`
-	Group       string    `json:"group,omitempty"`
-	Name        string    `json:"name,omitempty"`
-	Description string    `json:"description,omitempty"`
-	Version     string    `json:"version,omitempty"`
-	Classifier  string    `json:"classifier,omitempty"`
-
-	CPE       string `json:"cpe,omitempty"`
-	PURL      string `json:"purl,omitempty"`
-	SWIDTagID string `json:"swidTagId,omitempty"`
-
+	UUID               uuid.UUID         `json:"uuid,omitempty"`
+	Author             string            `json:"author,omitempty"`
+	Publisher          string            `json:"publisher,omitempty"`
+	Group              string            `json:"group,omitempty"`
+	Name               string            `json:"name,omitempty"`
+	Description        string            `json:"description,omitempty"`
+	Version            string            `json:"version,omitempty"`
+	Classifier         string            `json:"classifier,omitempty"`
+	CPE                string            `json:"cpe,omitempty"`
+	PURL               string            `json:"purl,omitempty"`
+	SWIDTagID          string            `json:"swidTagId,omitempty"`
 	DirectDependencies string            `json:"directDependencies,omitempty"`
 	Properties         []ProjectProperty `json:"properties,omitempty"`
 	Tags               []Tag             `json:"tags,omitempty"`

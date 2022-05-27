@@ -1,0 +1,22 @@
+{
+  "notification": {
+    "level": "INFORMATIONAL",
+    "scope": "PORTFOLIO",
+    "group": "BOM_CONSUMED",
+    "timestamp": "2019-08-23T21:57:57.418",
+    "title": "Bill-of-Materials Consumed",
+    "content": "A CycloneDX BOM was consumed and will be processed",
+    "subject": {
+      "project": {
+        "uuid": "6fb1820f-5280-4577-ac51-40124aabe307",
+        "name": "Acme Example",
+        "version": "1.0.0"
+      },
+      "bom": {
+        "content": "<base64 encoded bom>",
+        "format": "CycloneDX",
+        "specVersion": "1.1"
+      }
+    }
+  }
+}
