@@ -52,7 +52,7 @@ type Vulnerability struct {
 	SubTitle       string    `json:"subtitle"`
 	Description    string    `json:"description"`
 	Recommendation string    `json:"recommendation"`
-	CVSSV2         float32   `json:"cvssv2"`
-	CVSSV3         float32   `json:"cvssv3"`
+	CVSSV2         float64   `json:"cvssv2"`
+	CVSSV3         float64   `json:"cvssv3"`
 	Severity       string    `json:"severity"`
 }
