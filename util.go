@@ -16,7 +16,7 @@ func FetchAll[T any](f func(po PageOptions) (Page[T], error)) (items []T, err er
 		}
 
 		items = append(items, page.Items...)
-		if len(page.Items) == 0 || len(items) > page.TotalCount {
+		if len(page.Items) == 0 || len(items) >= page.TotalCount {
 			break
 		}
 
