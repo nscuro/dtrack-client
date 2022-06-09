@@ -18,7 +18,7 @@ func (e APIError) Error() string {
 	return fmt.Sprintf("%s (status: %d)", e.Message, e.StatusCode)
 }
 
-func checkResponse(res *http.Response) error {
+func checkResponseForError(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode < 300 {
 		return nil
 	}

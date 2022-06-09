@@ -66,8 +66,8 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	}
 
 	for _, option := range options {
-		if err := option(&client); err != nil {
-			return nil, err
+		if optionErr := option(&client); optionErr != nil {
+			return nil, optionErr
 		}
 	}
 
@@ -174,8 +174,8 @@ func withBody(body interface{}) requestOption {
 }
 
 type Page[T any] struct {
-	Items      []T
-	TotalCount int
+	Items      []T // Items on this page
+	TotalCount int // Total number of items
 }
 
 type PageOptions struct {
@@ -221,7 +221,7 @@ func (c Client) doRequest(req *http.Request, v interface{}) (a apiResponse, err 
 		log.Printf("received response:\n<<<<<<\n%s\n<<<<<<\n", string(resDump))
 	}
 
-	err = checkResponse(res)
+	err = checkResponseForError(res)
 	if err != nil {
 		return
 	}
