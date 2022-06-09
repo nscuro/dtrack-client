@@ -4,20 +4,20 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/nscuro/dtrack-client)](https://pkg.go.dev/github.com/nscuro/dtrack-client)
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)
 
-*Go client library for [OWASP Dependency-Track](https://dependencytrack.org/)*
+*Unofficial Go client library for [OWASP Dependency-Track](https://dependencytrack.org/)*
 
 ## Installation
 
 ```
-GO111MODULE=on go get github.com/nscuro/dtrack-client
+go get github.com/nscuro/dtrack-client
 ```
 
 ## Compatibility
 
-| dtrack-client Version | Go Version | Dependency-Track Version |
-|:---------------------:|:----------:|:------------------------:|
-|        < 0.6.0        |   1.15+    |          4.0.0+          |
-|       >= 0.6.0        |   1.18+    |          4.5.0+          |
+| *dtrack-client* Version | Go Version | Dependency-Track Version |
+|:-----------------------:|:----------:|:------------------------:|
+|         < 0.6.0         |   1.15+    |          4.0.0+          |
+|        >= 0.6.0         |   1.18+    |          4.0.0+          |
 
 ## Usage
 
