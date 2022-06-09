@@ -65,6 +65,16 @@ func (ps ProjectService) Create(ctx context.Context, project Project) (p Project
 	return
 }
 
+func (ps ProjectService) Patch(ctx context.Context, projectUUID uuid.UUID, project Project) (p Project, err error) {
+	req, err := ps.client.newRequest(ctx, http.MethodPatch, fmt.Sprintf("/api/v1/project/%s", projectUUID), withBody(project))
+	if err != nil {
+		return
+	}
+
+	_, err = ps.client.doRequest(req, &p)
+	return
+}
+
 func (ps ProjectService) Update(ctx context.Context, project Project) (p Project, err error) {
 	req, err := ps.client.newRequest(ctx, http.MethodPost, "/api/v1/project", withBody(project))
 	if err != nil {
