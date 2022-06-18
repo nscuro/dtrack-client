@@ -7,7 +7,8 @@ import (
 	"github.com/nscuro/dtrack-client/notification"
 )
 
-func ExampleParse() {
+// This example demonstrates how to parse and process notifications.
+func Example_parse() {
 	file, err := os.Open("./testdata/new-vulnerability.json")
 	if err != nil {
 		panic(err)
@@ -19,13 +20,17 @@ func ExampleParse() {
 		panic(err)
 	}
 
-	subject, ok := n.Subject.(*notification.NewVulnerabilitySubject)
-	if !ok {
-		panic("unexpected subject type")
+	switch subject := n.Subject.(type) {
+	case *notification.NewVulnerabilitySubject:
+		fmt.Printf("new vulnerability identified: %s\n", subject.Vulnerability.VulnID)
+		for _, project := range subject.AffectedProjects {
+			fmt.Printf("=> Project: %s %s\n", project.Name, project.Version)
+			fmt.Printf("   Component: %s %s\n", subject.Component.Name, subject.Component.Version)
+		}
 	}
 
-	fmt.Println(subject.Vulnerability.VulnID)
-
 	// Output:
-	// CVE-2012-5784
+	// new vulnerability identified: CVE-2012-5784
+	// => Project: Acme Example 1.0.0
+	//    Component: axis 1.4
 }
