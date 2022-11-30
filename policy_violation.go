@@ -22,6 +22,25 @@ type PolicyViolationService struct {
 	client *Client
 }
 
+func (pvs PolicyViolationService) GetAll(ctx context.Context, suppressed bool, po PageOptions) (p Page[PolicyViolation], err error) {
+	params := map[string]string{
+		"suppressed": strconv.FormatBool(suppressed),
+	}
+
+	req, err := pvs.client.newRequest(ctx, http.MethodGet, "/api/v1/violation", withParams(params), withPageOptions(po))
+	if err != nil {
+		return
+	}
+
+	res, err := pvs.client.doRequest(req, &p.Items)
+	if err != nil {
+		return
+	}
+
+	p.TotalCount = res.TotalCount
+	return
+}
+
 func (pvs PolicyViolationService) GetAllForProject(ctx context.Context, projectUUID uuid.UUID, suppressed bool, po PageOptions) (p Page[PolicyViolation], err error) {
 	params := map[string]string{
 		"suppressed": strconv.FormatBool(suppressed),
