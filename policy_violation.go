@@ -11,11 +11,12 @@ import (
 
 type PolicyViolation struct {
 	UUID            uuid.UUID
-	Component       Component        `json:"component"`
-	Project         Project          `json:"project"`
-	PolicyCondition *PolicyCondition `json:"policyCondition,omitempty"`
-	Type            string           `json:"type"`
-	Text            string           `json:"text"`
+	Component       Component          `json:"component"`
+	Project         Project            `json:"project"`
+	PolicyCondition *PolicyCondition   `json:"policyCondition,omitempty"`
+	Type            string             `json:"type"`
+	Text            string             `json:"text"`
+	Analysis        *ViolationAnalysis `json:"analysis,omitempty"`
 }
 
 type PolicyViolationService struct {
