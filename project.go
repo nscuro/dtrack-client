@@ -24,6 +24,7 @@ type Project struct {
 	Properties         []ProjectProperty `json:"properties,omitempty"`
 	Tags               []Tag             `json:"tags,omitempty"`
 	Active             bool              `json:"active"`
+	Metrics            ProjectMetrics    `json:"metrics"`
 }
 
 type ProjectService struct {
