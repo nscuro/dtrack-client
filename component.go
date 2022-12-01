@@ -72,9 +72,6 @@ func (cs ComponentService) GetAll(ctx context.Context, projectUUID uuid.UUID, po
 }
 
 func (cs ComponentService) Create(ctx context.Context, projectUUID string, component Component) (c Component, err error) {
-	if err != nil {
-		return
-	}
 	req, err := cs.client.newRequest(ctx, http.MethodPut,
 		fmt.Sprintf("/api/v1/component/project/%s", projectUUID),
 		withBody(component))
