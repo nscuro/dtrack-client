@@ -25,6 +25,7 @@ type Project struct {
 	Tags               []Tag             `json:"tags,omitempty"`
 	Active             bool              `json:"active"`
 	Metrics            ProjectMetrics    `json:"metrics"`
+	LastBOMImport      int               `json:"lastBomImport"`
 }
 
 type ProjectService struct {
