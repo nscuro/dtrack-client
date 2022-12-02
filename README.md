@@ -6,6 +6,12 @@
 
 *Unofficial Go client library for [OWASP Dependency-Track](https://dependencytrack.org/)*
 
+## ⚠️ WE HAVE MOVED ⚠️
+
+*dtrack-client* has moved to the [DependencyTrack](https://github.com/DependencyTrack) organization! 🎉  
+
+Please use 👉 [`github.com/DependencyTrack/client-go`](https://github.com/DependencyTrack/client-go) 👈
+
 ## Installation
 
 ```
